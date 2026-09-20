@@ -1,12 +1,11 @@
+ <canvas id="app-netbooks" title="Sistema de Gestión y Registro de Netbooks" type="text/html">
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espacio Digital - Control de Netbooks</title>
-    <!-- Tailwind CSS -->
+    <title>Sistema de Gestión y Registro de Netbooks</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -19,9 +18,9 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
 
-    <!-- Encabezado con métricas de Asignadas y Devueltas del día -->
+    <!-- Encabezado con métricas al estilo de la página de referencia -->
     <header class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -31,18 +30,18 @@
                     </div>
                     <div>
                         <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Espacio Digital - Control de Netbooks</h1>
-                        <p class="text-xs sm:text-sm text-blue-100/80">Sistema de préstamos, carros y devolución de equipos</p>
+                        <p class="text-xs sm:text-sm text-blue-100/80">Registro diario de préstamos y devolución de equipos</p>
                     </div>
                 </div>
 
-                <!-- Métricas diarias -->
+                <!-- Métricas diarias de equipos (Asignadas y Devueltas) -->
                 <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-md p-2 sm:p-3 rounded-xl border border-white/20 shadow-inner">
-                    <div class="text-center px-4 py-1 bg-blue-950/40 rounded-lg">
+                    <div class="text-center px-3 py-1 bg-blue-950/40 rounded-lg">
                         <span class="block text-xs font-medium text-blue-200 uppercase tracking-wider">Hoy Asignadas</span>
                         <span id="counter-asignadas" class="text-2xl font-extrabold text-amber-300">0</span>
                     </div>
                     <div class="h-8 w-px bg-white/20"></div>
-                    <div class="text-center px-4 py-1 bg-blue-950/40 rounded-lg">
+                    <div class="text-center px-3 py-1 bg-blue-950/40 rounded-lg">
                         <span class="block text-xs font-medium text-blue-200 uppercase tracking-wider">Hoy Devueltas</span>
                         <span id="counter-devueltas" class="text-2xl font-extrabold text-emerald-300">0</span>
                     </div>
@@ -53,7 +52,7 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Formulario Principal -->
+        <!-- Formulario principal de Registro -->
         <form id="loanForm" class="space-y-8" onsubmit="handleSubmit(event)">
             
             <!-- SECCIÓN 1: DATOS DEL PRÉSTAMO -->
@@ -77,7 +76,7 @@
                     <div>
                         <label for="turno" class="block text-sm font-medium text-slate-700 mb-1">Turno <span class="text-red-500">*</span></label>
                         <select id="turno" name="turno" required
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white">
+                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
                             <option value="">Seleccione turno</option>
                             <option value="Mañana">Mañana</option>
                             <option value="Tarde">Tarde</option>
@@ -89,7 +88,7 @@
                     <div>
                         <label for="sector" class="block text-sm font-medium text-slate-700 mb-1">Sector <span class="text-red-500">*</span></label>
                         <select id="sector" name="sector" required onchange="handleSectorChange()"
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white">
+                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
                             <option value="">Seleccione sector</option>
                             <option value="Biblioteca">Biblioteca</option>
                             <option value="Espacio Digital">Espacio Digital</option>
@@ -97,7 +96,7 @@
                         </select>
                     </div>
 
-                    <!-- Carro (Filtrado por Sector) -->
+                    <!-- Carro (Dependiente del sector) -->
                     <div>
                         <label for="carro" class="block text-sm font-medium text-slate-700 mb-1">Carro Asignado <span class="text-red-500">*</span></label>
                         <select id="carro" name="carro" required disabled
@@ -118,12 +117,14 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Docente (Búsqueda o manual) -->
+                    <!-- Búsqueda / Selección de Docente -->
                     <div class="relative">
-                        <label for="docente_input" class="block text-sm font-medium text-slate-700 mb-1">Docente <span class="text-red-500">*</span></label>
-                        <input type="text" id="docente_input" list="docentes_list" placeholder="Apellido y Nombre..." required oninput="handleDocenteSelect()"
+                        <label for="docente_input" class="block text-sm font-medium text-slate-700 mb-1">Docente (Búsqueda o Manual) <span class="text-red-500">*</span></label>
+                        <input type="text" id="docente_input" list="docentes_list" placeholder="Escriba apellido o nombre..." required oninput="handleDocenteSelect()"
                             class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
-                        <datalist id="docentes_list"></datalist>
+                        <datalist id="docentes_list">
+                            <!-- Se completa por JavaScript -->
+                        </datalist>
                     </div>
 
                     <!-- Área (Opcional) -->
@@ -133,7 +134,7 @@
                             class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
                     </div>
 
-                    <!-- Mail (Opcional) -->
+                    <!-- Correo Electrónico (Opcional) -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Correo Electrónico <span class="text-xs text-slate-400">(Opcional)</span></label>
                         <input type="email" id="email" name="email" placeholder="docente@bue.edu.ar"
@@ -172,7 +173,7 @@
                         </div>
                         <div>
                             <h2 class="text-lg font-semibold text-slate-800">3. Selección de Netbooks (Casillas 1 al 40)</h2>
-                            <p class="text-xs text-slate-500">Puede marcar una o más computadoras para la misma solicitud</p>
+                            <p class="text-xs text-slate-500">Puedes seleccionar una o más computadoras para la misma solicitud</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -187,17 +188,17 @@
 
                 <!-- Grilla de casillas 1 a 40 -->
                 <div class="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-10 gap-2.5" id="netbooks-grid">
-                    <!-- Generado dinámicamente con JS -->
+                    <!-- Renderizado por JS -->
                 </div>
             </div>
 
-            <!-- NOTIFICACIÓN OPCIONAL POR EMAIL Y ACCIONES -->
+            <!-- OPCIONAL: ENVIAR CORREO ELECTRÓNICO Y ACCIONES -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
                     <input type="checkbox" id="send_email_option" name="send_email_option"
                         class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
                     <label for="send_email_option" class="text-sm font-medium text-slate-700 cursor-pointer">
-                        Enviar correo electrónico de confirmación al docente <span class="text-xs text-slate-400">(Opcional)</span>
+                        Enviar notificación por correo electrónico al docente (Opcional)
                     </label>
                 </div>
 
@@ -213,28 +214,30 @@
             </div>
         </form>
 
-        <!-- TABLA DE HISTORIAL Y DEVOLUCIONES -->
+        <!-- TABLA DE REGISTROS / HISTORIAL -->
         <div class="mt-10 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-6 border-b border-slate-100">
-                <h3 class="text-lg font-semibold text-slate-800">Historial de Registros</h3>
-                <p class="text-xs text-slate-500">Controle los equipos prestados y marque la devolución al recibirlos</p>
+            <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-800">Historial de Registros</h3>
+                    <p class="text-xs text-slate-500">Gestiona los préstamos y marca la devolución de los equipos</p>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm text-slate-600">
                     <thead class="bg-slate-50 text-slate-700 font-medium uppercase text-xs tracking-wider border-b border-slate-200">
                         <tr>
-                            <th class="px-4 py-3">Fecha / Turno</th>
+                            <th class="px-4 py-3">Fecha</th>
                             <th class="px-4 py-3">Docente</th>
                             <th class="px-4 py-3">Área / Mail</th>
-                            <th class="px-4 py-3">Sector y Carro</th>
+                            <th class="px-4 py-3">Ubicación</th>
                             <th class="px-4 py-3">Equipos</th>
                             <th class="px-4 py-3">Estado</th>
                             <th class="px-4 py-3 text-right">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="records-table-body" class="divide-y divide-slate-100">
-                        <!-- Renderizado por JS -->
+                        <!-- Renderizado de registros por JS -->
                     </tbody>
                 </table>
             </div>
@@ -243,7 +246,7 @@
     </main>
 
     <script>
-        // Mapeo de Carros por Sector
+        // Mapeo de Carros según Sector
         const carrosPorSector = {
             'Biblioteca': ['Carro C', 'Carro E'],
             'Espacio Digital': ['Carro D', 'Carro G'],
@@ -260,17 +263,28 @@
             { nombre: "Agostina", apellido: "Paz", area: "AREA COMUNICACIÓN", email: "agostina.calienno@bue.edu.ar" }
         ];
 
+        // Estado local
         let prestamos = [];
 
         document.addEventListener("DOMContentLoaded", () => {
+            // Inicializar Lucide Icons
             lucide.createIcons();
+
+            // Establecer fecha de hoy por defecto
+            document.getElementById('fecha').valueToDate = new Date();
             document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+
+            // Renderizar casillas 1 a 40
             renderNetbooksGrid();
+
+            // Cargar lista de docentes
             populateDocentesList();
+
+            // Actualizar tabla y contadores
             updateUI();
         });
 
-        // Casillas 1 a 40
+        // Genera la cuadrícula de netbooks 1 al 40
         function renderNetbooksGrid() {
             const grid = document.getElementById('netbooks-grid');
             grid.innerHTML = '';
@@ -288,7 +302,7 @@
             lucide.createIcons();
         }
 
-        // Cargar lista de docentes en el datalist
+        // Carga los docentes en el datalist para autocompletado
         function populateDocentesList() {
             const datalist = document.getElementById('docentes_list');
             datalist.innerHTML = '';
@@ -299,7 +313,7 @@
             });
         }
 
-        // Autocompleta opcionalmente área y mail
+        // Autocompleta área y mail si el docente existe
         function handleDocenteSelect() {
             const val = document.getElementById('docente_input').value.toLowerCase().trim();
             const found = docentesData.find(d => `${d.apellido}, ${d.nombre}`.toLowerCase() === val || `${d.nombre} ${d.apellido}`.toLowerCase() === val);
@@ -310,7 +324,7 @@
             }
         }
 
-        // Filtrar Carros por Sector
+        // Manejo de cambio de Sector para desplegar Carros correspondientes
         function handleSectorChange() {
             const sector = document.getElementById('sector').value;
             const selectCarro = document.getElementById('carro');
@@ -332,11 +346,12 @@
             }
         }
 
+        // Marcar/Desmarcar todas las netbooks
         function selectAll(status) {
             document.querySelectorAll('input[name="netbooks"]').forEach(cb => cb.checked = status);
         }
 
-        // Registrar Préstamo
+        // Registrar un nuevo préstamo
         function handleSubmit(e) {
             e.preventDefault();
 
@@ -365,35 +380,40 @@
                     : 'N/A',
                 numeroSerie: document.getElementById('numero_serie').value || 'N/A',
                 netbooks: selectedNetbooks,
-                estado: 'Asignada'
+                estado: 'Asignada' // Asignada o Devuelta
             };
 
             prestamos.unshift(record);
 
+            // Si se marcó enviar correo electrónico opcional
             if (sendEmail) {
                 sendNotificationEmail(record);
             }
 
+            // Reiniciar y actualizar
             resetForm();
             updateUI();
         }
 
+        // Envía notificación por correo mediante cliente de correo predeterminado
         function sendNotificationEmail(record) {
-            const subject = encodeURIComponent(`Préstamo de Netbooks - ${record.fecha}`);
+            const subject = encodeURIComponent(`Notificación de Préstamo de Netbooks - ${record.fecha}`);
             const body = encodeURIComponent(
-                `Estimado/a ${record.docente},\n\n` +
-                `Le confirmamos el registro del préstamo de equipos:\n\n` +
+                `Hola ${record.docente},\n\n` +
+                `Se ha registrado el préstamo de equipamiento en la institución:\n\n` +
                 `- Fecha: ${record.fecha}\n` +
                 `- Turno: ${record.turno}\n` +
-                `- Ubicación: ${record.sector} (${record.carro})\n` +
-                `- Netbook(s) Asignada(s): N° ${record.netbooks.join(', ')}\n` +
+                `- Sector: ${record.sector} (${record.carro})\n` +
+                `- Equipos Netbooks N°: ${record.netbooks.join(', ')}\n` +
                 (record.estudiante !== 'N/A' ? `- Estudiante: ${record.estudiante}\n` : '') +
-                `\nAtentamente,\nEspacio Digital`
+                `\nMuchas gracias.\nEspacio Digital.`
             );
 
-            window.open(`mailto:${record.email !== 'N/A' ? record.email : ''}?subject=${subject}&body=${body}`, '_blank');
+            const mailtoUrl = `mailto:${record.email !== 'N/A' ? record.email : ''}?subject=${subject}&body=${body}`;
+            window.open(mailtoUrl, '_blank');
         }
 
+        // Cambia el estado entre 'Asignada' y 'Devuelta'
         function toggleDevolucion(id) {
             const item = prestamos.find(p => p.id === id);
             if (item) {
@@ -402,13 +422,15 @@
             }
         }
 
+        // Eliminar registro
         function deleteRecord(id) {
-            if (confirm("¿Está seguro de eliminar este registro?")) {
+            if (confirm("¿Desea eliminar este registro del historial?")) {
                 prestamos = prestamos.filter(p => p.id !== id);
                 updateUI();
             }
         }
 
+        // Reinicia el formulario
         function resetForm() {
             document.getElementById('loanForm').reset();
             document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
@@ -416,9 +438,11 @@
             selectAll(false);
         }
 
+        // Actualiza los contadores de la cabecera y la tabla de historial
         function updateUI() {
             const todayStr = new Date().toISOString().split('T')[0];
 
+            // Contadores de hoy
             const hoyAsignadas = prestamos
                 .filter(p => p.fecha === todayStr && p.estado === 'Asignada')
                 .reduce((acc, p) => acc + p.netbooks.length, 0);
@@ -430,6 +454,7 @@
             document.getElementById('counter-asignadas').textContent = hoyAsignadas;
             document.getElementById('counter-devueltas').textContent = hoyDevueltas;
 
+            // Renderizado de tabla
             const tbody = document.getElementById('records-table-body');
             tbody.innerHTML = '';
 
@@ -437,7 +462,7 @@
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="7" class="px-4 py-8 text-center text-slate-400">
-                            No hay préstamos registrados actualmente.
+                            No hay préstamos registrados aún.
                         </td>
                     </tr>
                 `;
@@ -472,10 +497,10 @@
                             </span>
                         </td>
                         <td class="px-4 py-3 text-right space-x-2 whitespace-nowrap">
-                            <button onclick="toggleDevolucion(${p.id})" class="p-1 text-slate-500 hover:text-emerald-600 rounded transition" title="Cambiar Estado Devolución">
+                            <button onclick="toggleDevolucion(${p.id})" class="p-1 text-slate-500 hover:text-emerald-600 rounded transition" title="Marcar Devolución">
                                 <i data-lucide="${p.estado === 'Asignada' ? 'check-circle' : 'rotate-ccw'}" class="w-5 h-5"></i>
                             </button>
-                            <button onclick="deleteRecord(${p.id})" class="p-1 text-slate-500 hover:text-red-600 rounded transition" title="Eliminar Registro">
+                            <button onclick="deleteRecord(${p.id})" class="p-1 text-slate-500 hover:text-red-600 rounded transition" title="Eliminar">
                                 <i data-lucide="trash-2" class="w-5 h-5"></i>
                             </button>
                         </td>
@@ -488,3 +513,4 @@
     </script>
 </body>
 </html>
+</canvas>
