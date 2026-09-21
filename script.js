@@ -5,7 +5,7 @@ const carrosPorSector = {
     'Secretaría': ['Carro A', 'Carro B', 'Carro F']
 };
 
-// Base de datos de docentes precargados
+// Base de datos de docentes precargados de la planilla
 const docentesData = [
     { nombre: "Carlos Alberto", apellido: "Barbieri", area: "AREA CONTABLES", email: "carlos.barbieri@bue.edu.ar" },
     { nombre: "Eduardo", apellido: "Yugdar", area: "AREA CONTABLES", email: "eduardo.yugdar@bue.edu.ar" },
@@ -15,29 +15,67 @@ const docentesData = [
     { nombre: "Agostina", apellido: "Paz", area: "AREA COMUNICACIÓN", email: "agostina.calienno@bue.edu.ar" }
 ];
 
-let prestamos = [];
+// Cargar préstamos guardados en el navegador (localStorage) o iniciar vacío
+let prestamos = JSON.parse(localStorage.getItem('prestamos_netbooks')) || [];
 
 document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-    renderNetbooksGrid();
     populateDocentesList();
     updateUI();
 });
 
+// Guardar en el almacenamiento del navegador
+function saveToLocalStorage() {
+    localStorage.setItem('prestamos_netbooks', JSON.stringify(prestamos));
+}
+
+// Obtener conjunto de netbooks que están ocupadas actualmente (estado 'Asignada')
+function getOcupiedNetbooks() {
+    const ocupadas = new Set();
+    prestamos.forEach(p => {
+        if (p.estado === 'Asignada') {
+            p.netbooks.forEach(nb => ocupadas.add(String(nb)));
+        }
+    });
+    return ocupadas;
+}
+
+// Renderizar la grilla de casillas (1 a 40) bloqueando las prestadas
 function renderNetbooksGrid() {
     const grid = document.getElementById('netbooks-grid');
+    const ocupadas = getOcupiedNetbooks();
     grid.innerHTML = '';
+
     for (let i = 1; i <= 40; i++) {
-        grid.innerHTML += `
-            <div>
-                <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" class="hidden netbook-checkbox">
-                <label for="nb_${i}" class="netbook-card flex flex-col items-center justify-center p-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-400 cursor-pointer select-none">
-                    <i data-lucide="laptop" class="w-4 h-4 mb-1"></i>
-                    <span class="text-xs font-bold">N° ${i}</span>
-                </label>
-            </div>
-        `;
+        const strNum = String(i);
+        const isOcupied = ocupadas.has(strNum);
+
+        if (isOcupied) {
+            // Casilla Deshabilitada (Netbook ya prestada)
+            grid.innerHTML += `
+                <div>
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} actualmente prestado">
+                        <i data-lucide="lock" class="w-4 h-4 mb-1 text-red-500"></i>
+                        <span class="text-xs font-bold">N° ${i}</span>
+                        <span class="text-[9px] font-bold tracking-wider uppercase text-red-600">Ocupada</span>
+                    </label>
+                </div>
+            `;
+        } else {
+            // Casilla Disponible (Verde al seleccionar)
+            grid.innerHTML += `
+                <div>
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" class="hidden netbook-checkbox">
+                    <label for="nb_${i}" class="netbook-card flex flex-col items-center justify-center p-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-400 cursor-pointer select-none">
+                        <i data-lucide="laptop" class="w-4 h-4 mb-1"></i>
+                        <span class="text-xs font-bold">N° ${i}</span>
+                        <span class="text-[9px] font-medium text-emerald-600">Disponible</span>
+                    </label>
+                </div>
+            `;
+        }
     }
     lucide.createIcons();
 }
@@ -84,7 +122,7 @@ function handleSectorChange() {
 }
 
 function selectAll(status) {
-    document.querySelectorAll('input[name="netbooks"]').forEach(cb => cb.checked = status);
+    document.querySelectorAll('input[name="netbooks"]:not(:disabled)').forEach(cb => cb.checked = status);
 }
 
 function handleSubmit(e) {
@@ -93,7 +131,15 @@ function handleSubmit(e) {
     const selectedNetbooks = Array.from(document.querySelectorAll('input[name="netbooks"]:checked')).map(cb => cb.value);
 
     if (selectedNetbooks.length === 0) {
-        alert("Por favor seleccione al menos una netbook (1-40).");
+        alert("Por favor seleccione al menos una netbook disponible (1-40).");
+        return;
+    }
+
+    // Verificar doble confirmación de disponibilidad
+    const ocupadas = getOcupiedNetbooks();
+    const conflicto = selectedNetbooks.find(nb => ocupadas.has(String(nb)));
+    if (conflicto) {
+        alert(`La netbook N° ${conflicto} ya se encuentra prestada y no puede asignarse de nuevo.`);
         return;
     }
 
@@ -115,6 +161,7 @@ function handleSubmit(e) {
     };
 
     prestamos.unshift(record);
+    saveToLocalStorage();
 
     if (document.getElementById('send_email_option').checked) {
         sendNotificationEmail(record);
@@ -144,13 +191,15 @@ function toggleDevolucion(id) {
     const item = prestamos.find(p => p.id === id);
     if (item) {
         item.estado = item.estado === 'Asignada' ? 'Devuelta' : 'Asignada';
+        saveToLocalStorage();
         updateUI();
     }
 }
 
 function deleteRecord(id) {
-    if (confirm("¿Desea eliminar este registro?")) {
+    if (confirm("¿Desea eliminar este registro del historial?")) {
         prestamos = prestamos.filter(p => p.id !== id);
+        saveToLocalStorage();
         updateUI();
     }
 }
@@ -164,6 +213,9 @@ function resetForm() {
 
 function updateUI() {
     const todayStr = new Date().toISOString().split('T')[0];
+
+    // Re-renderizar grilla para deshabilitar las netbooks prestadas actualmente
+    renderNetbooksGrid();
 
     const hoyAsignadas = prestamos
         .filter(p => p.fecha === todayStr && p.estado === 'Asignada')
@@ -232,7 +284,7 @@ function updateUI() {
     lucide.createIcons();
 }
 
-// Función para exportar la tabla a un archivo CSV (Planilla de cálculos)
+// Función para exportar la planilla a un archivo CSV
 function exportToCSV() {
     if (prestamos.length === 0) {
         alert("No hay registros en el historial para exportar.");
@@ -255,7 +307,7 @@ function exportToCSV() {
         `"${p.estado}"`
     ]);
 
-    let csvContent = "\uFEFF"; // BOM para caracteres especiales (tildes, eñes) en Excel
+    let csvContent = "\uFEFF";
     csvContent += headers.join(";") + "\n";
     rows.forEach(row => {
         csvContent += row.join(";") + "\n";
