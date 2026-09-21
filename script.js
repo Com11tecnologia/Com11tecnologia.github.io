@@ -32,7 +32,7 @@ function renderNetbooksGrid() {
         grid.innerHTML += `
             <div>
                 <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" class="hidden netbook-checkbox">
-                <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-slate-200 bg-white hover:border-blue-400 cursor-pointer transition select-none">
+                <label for="nb_${i}" class="netbook-card flex flex-col items-center justify-center p-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-400 cursor-pointer select-none">
                     <i data-lucide="laptop" class="w-4 h-4 mb-1"></i>
                     <span class="text-xs font-bold">N° ${i}</span>
                 </label>
@@ -230,4 +230,43 @@ function updateUI() {
     });
 
     lucide.createIcons();
+}
+
+// Función para exportar la tabla a un archivo CSV (Planilla de cálculos)
+function exportToCSV() {
+    if (prestamos.length === 0) {
+        alert("No hay registros en el historial para exportar.");
+        return;
+    }
+
+    const headers = ["Fecha", "Turno", "Docente", "Area", "Email", "Sector", "Carro", "Equipos Netbook", "Estudiante", "Numero de Serie", "Estado"];
+    
+    const rows = prestamos.map(p => [
+        `"${p.fecha}"`,
+        `"${p.turno}"`,
+        `"${p.docente}"`,
+        `"${p.area}"`,
+        `"${p.email}"`,
+        `"${p.sector}"`,
+        `"${p.carro}"`,
+        `"${p.netbooks.map(nb => 'N°' + nb).join('; ')}"`,
+        `"${p.estudiante}"`,
+        `"${p.numeroSerie}"`,
+        `"${p.estado}"`
+    ]);
+
+    let csvContent = "\uFEFF"; // BOM para caracteres especiales (tildes, eñes) en Excel
+    csvContent += headers.join(";") + "\n";
+    rows.forEach(row => {
+        csvContent += row.join(";") + "\n";
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Historial_Netbooks_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
