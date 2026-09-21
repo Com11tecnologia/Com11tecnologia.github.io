@@ -166,7 +166,7 @@
                         </div>
                         <div>
                             <h2 class="text-lg font-semibold text-slate-800">3. Selección de Netbooks (Casillas 1 al 40)</h2>
-                            <p class="text-xs text-slate-500">Puedes seleccionar una o más computadoras para el mismo registro</p>
+                            <p class="text-xs text-slate-500">Haz clic en las casillas para marcar los equipos seleccionados (se resaltarán en verde)</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -207,9 +207,16 @@
 
         <!-- HISTORIAL DE REGISTROS -->
         <div class="mt-10 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-6 border-b border-slate-100">
-                <h3 class="text-lg font-semibold text-slate-800">Historial de Registros</h3>
-                <p class="text-xs text-slate-500">Haz clic en el icono para alternar el estado de devolución de los equipos</p>
+            <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-800">Historial de Registros</h3>
+                    <p class="text-xs text-slate-500">Haz clic en el icono para alternar el estado de devolución de los equipos</p>
+                </div>
+                <!-- Botón de Exportar a Excel/Planilla -->
+                <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center space-x-2 self-start sm:self-auto">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                    <span>Exportar a Excel (.csv)</span>
+                </button>
             </div>
 
             <div class="overflow-x-auto">
