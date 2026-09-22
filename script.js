@@ -18,17 +18,20 @@ let docentesData = JSON.parse(localStorage.getItem('docentes_netbooks')) || doce
 let prestamos = JSON.parse(localStorage.getItem('prestamos_netbooks')) || [];
 let inventarioEquipos = JSON.parse(localStorage.getItem('inventario_equipos')) || {};
 
-// Inicializar inventario de los 40 equipos si no existe
-for (let i = 1; i <= 40; i++) {
-    const key = String(i);
-    if (!inventarioEquipos[key]) {
-        inventarioEquipos[key] = {
-            idActivo: `NET-2026-${String(i).padStart(3, '0')}`,
-            estado: 'Disponible',
-            mantenimiento: 'Sin registros de fallas.'
-        };
+// Inicializar inventario por Carro y N° de equipo si no existe
+const todosLosCarros = ['Carro A', 'Carro B', 'Carro C', 'Carro D', 'Carro E', 'Carro F', 'Carro G'];
+todosLosCarros.forEach(carro => {
+    for (let i = 1; i <= 40; i++) {
+        const key = `${carro}_${i}`;
+        if (!inventarioEquipos[key]) {
+            inventarioEquipos[key] = {
+                idActivo: `${carro.replace(' ', '')}-${String(i).padStart(2, '0')}`,
+                estado: 'Disponible',
+                mantenimiento: 'Sin registros de fallas.'
+            };
+        }
     }
-}
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
@@ -44,34 +47,40 @@ function saveToLocalStorage() {
     localStorage.setItem('inventario_equipos', JSON.stringify(inventarioEquipos));
 }
 
-function getOcupiedNetbooks() {
+// Obtiene los números de netbooks ocupados para un CARRO ESPECÍFICO
+function getOcupiedNetbooksByCarro(carroTarget) {
     const ocupadas = new Set();
+    if (!carroTarget) return ocupadas;
+
     prestamos.forEach(p => {
-        if (p.estado === 'Asignada') {
+        if (p.estado === 'Asignada' && p.carro === carroTarget) {
             p.netbooks.forEach(nb => ocupadas.add(String(nb)));
         }
     });
     return ocupadas;
 }
 
+// Renderiza las 40 casillas según el carro actualmente seleccionado en el formulario
 function renderNetbooksGrid() {
     const grid = document.getElementById('netbooks-grid');
     if (!grid) return;
 
-    const ocupadas = getOcupiedNetbooks();
+    const carroSeleccionado = document.getElementById('carro') ? document.getElementById('carro').value : '';
+    const ocupadas = getOcupiedNetbooksByCarro(carroSeleccionado);
     grid.innerHTML = '';
 
     for (let i = 1; i <= 40; i++) {
         const strNum = String(i);
         const isOcupied = ocupadas.has(strNum);
-        const equipo = inventarioEquipos[strNum] || { estado: 'Disponible' };
+        const keyInventario = carroSeleccionado ? `${carroSeleccionado}_${i}` : `Carro C_${i}`;
+        const equipo = inventarioEquipos[keyInventario] || { estado: 'Disponible' };
         const estado = equipo.estado;
 
         if (estado === 'Roto' || estado === 'Bajo reparación') {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-amber-400 bg-amber-50 text-amber-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} (${estado}) - Activo: ${equipo.idActivo}">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-amber-400 bg-amber-50 text-amber-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} (${estado}) en ${carroSeleccionado}">
                         <i data-lucide="wrench" class="w-4 h-4 mb-1 text-amber-600"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-bold tracking-wider uppercase text-amber-800">${estado}</span>
@@ -82,7 +91,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-purple-300 bg-purple-50 text-purple-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Arrendado">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-purple-300 bg-purple-50 text-purple-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Arrendado en ${carroSeleccionado}">
                         <i data-lucide="file-contract" class="w-4 h-4 mb-1 text-purple-600"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-bold tracking-wider uppercase text-purple-800">Arrendado</span>
@@ -93,7 +102,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} prestado actualmente">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} prestado en ${carroSeleccionado}">
                         <i data-lucide="lock" class="w-4 h-4 mb-1 text-red-500"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-bold tracking-wider uppercase text-red-600">Prestada</span>
@@ -116,6 +125,36 @@ function renderNetbooksGrid() {
     lucide.createIcons();
 }
 
+function handleSectorChange() {
+    const sector = document.getElementById('sector').value;
+    const selectCarro = document.getElementById('carro');
+
+    selectCarro.innerHTML = '<option value="">Seleccione un carro</option>';
+
+    if (sector && carrosPorSector[sector]) {
+        selectCarro.disabled = false;
+        selectCarro.classList.remove('bg-slate-50');
+        carrosPorSector[sector].forEach(carro => {
+            const opt = document.createElement('option');
+            opt.value = carro;
+            opt.textContent = carro;
+            selectCarro.appendChild(opt);
+        });
+    } else {
+        selectCarro.disabled = true;
+        selectCarro.classList.add('bg-slate-50');
+    }
+    renderNetbooksGrid();
+}
+
+// Al cambiar el carro en el formulario de préstamos, re-renderiza las 40 casillas de ese carro
+document.addEventListener("change", (e) => {
+    if (e.target && e.target.id === 'carro') {
+        renderNetbooksGrid();
+    }
+});
+
+// INVENTARIO Y MANTENIMIENTO POR CARRO
 function handleInvSectorChange() {
     const sector = document.getElementById('inv-sector').value;
     const selectCarro = document.getElementById('inv-carro');
@@ -135,11 +174,13 @@ function handleInvSectorChange() {
 
 function renderInventarioTable() {
     const tbody = document.getElementById('inventario-table-body');
-    if (!tbody) return;
+    const carroSeleccionado = document.getElementById('inv-carro') ? document.getElementById('inv-carro').value : 'Carro C';
+    if (!tbody || !carroSeleccionado) return;
+
     tbody.innerHTML = '';
 
     for (let i = 1; i <= 40; i++) {
-        const key = String(i);
+        const key = `${carroSeleccionado}_${i}`;
         const eq = inventarioEquipos[key] || { idActivo: 'N/A', estado: 'Disponible', mantenimiento: '' };
 
         let badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-200';
@@ -148,7 +189,7 @@ function renderInventarioTable() {
 
         tbody.innerHTML += `
             <tr class="hover:bg-slate-50 transition">
-                <td class="px-4 py-2.5 font-bold text-slate-800">Netbook N° ${i}</td>
+                <td class="px-4 py-2.5 font-bold text-slate-800">${carroSeleccionado} - N° ${i}</td>
                 <td class="px-4 py-2.5 text-xs font-mono text-slate-600">${eq.idActivo}</td>
                 <td class="px-4 py-2.5">
                     <span class="px-2 py-0.5 text-xs font-semibold rounded-full border ${badgeStyle}">
@@ -157,7 +198,7 @@ function renderInventarioTable() {
                 </td>
                 <td class="px-4 py-2.5 text-xs text-slate-500 max-w-xs truncate">${eq.mantenimiento}</td>
                 <td class="px-4 py-2.5 text-right">
-                    <button onclick="openInventarioModal(${i})" class="p-1 text-slate-500 hover:text-blue-600" title="Editar Activo / Mantenimiento">
+                    <button onclick="openInventarioModal('${carroSeleccionado}', ${i})" class="p-1 text-slate-500 hover:text-blue-600" title="Editar Activo / Mantenimiento">
                         <i data-lucide="edit-3" class="w-4 h-4"></i>
                     </button>
                 </td>
@@ -167,12 +208,12 @@ function renderInventarioTable() {
     lucide.createIcons();
 }
 
-function openInventarioModal(nbNumber) {
-    const key = String(nbNumber);
+function openInventarioModal(carro, nbNumber) {
+    const key = `${carro}_${nbNumber}`;
     const eq = inventarioEquipos[key] || { idActivo: '', estado: 'Disponible', mantenimiento: '' };
 
     document.getElementById('inv-edit-nb-id').value = key;
-    document.getElementById('inv-modal-title').textContent = `Editar Netbook N° ${nbNumber}`;
+    document.getElementById('inv-modal-title').textContent = `Editar ${carro} - Netbook N° ${nbNumber}`;
     document.getElementById('inv-modal-activo').value = eq.idActivo;
     document.getElementById('inv-modal-estado').value = eq.estado;
     document.getElementById('inv-modal-mantenimiento').value = eq.mantenimiento;
@@ -382,27 +423,6 @@ function saveOrUpdateDocente(docenteStr, areaStr, emailStr) {
     renderDocentesTable();
 }
 
-function handleSectorChange() {
-    const sector = document.getElementById('sector').value;
-    const selectCarro = document.getElementById('carro');
-
-    selectCarro.innerHTML = '<option value="">Seleccione un carro</option>';
-
-    if (sector && carrosPorSector[sector]) {
-        selectCarro.disabled = false;
-        selectCarro.classList.remove('bg-slate-50');
-        carrosPorSector[sector].forEach(carro => {
-            const opt = document.createElement('option');
-            opt.value = carro;
-            opt.textContent = carro;
-            selectCarro.appendChild(opt);
-        });
-    } else {
-        selectCarro.disabled = true;
-        selectCarro.classList.add('bg-slate-50');
-    }
-}
-
 function selectAll(status) {
     document.querySelectorAll('input[name="netbooks"]:not(:disabled)').forEach(cb => cb.checked = status);
 }
@@ -410,23 +430,36 @@ function selectAll(status) {
 function handleSubmit(e) {
     e.preventDefault();
 
+    const carroSeleccionado = document.getElementById('carro').value;
     const selectedNetbooks = Array.from(document.querySelectorAll('input[name="netbooks"]:checked')).map(cb => String(cb.value));
+
+    if (!carroSeleccionado) {
+        alert("Por favor seleccione un carro.");
+        return;
+    }
 
     if (selectedNetbooks.length === 0) {
         alert("Por favor seleccione al menos una netbook disponible (1-40).");
         return;
     }
 
-    const noDisponibles = selectedNetbooks.find(nb => inventarioEquipos[nb] && inventarioEquipos[nb].estado !== 'Disponible');
+    // Validar disponibilidad por inventario específico del carro
+    const noDisponibles = selectedNetbooks.find(nb => {
+        const key = `${carroSeleccionado}_${nb}`;
+        return inventarioEquipos[key] && inventarioEquipos[key].estado !== 'Disponible';
+    });
+
     if (noDisponibles) {
-        alert(`La netbook N° ${noDisponibles} no está disponible (${inventarioEquipos[noDisponibles].estado}).`);
+        const key = `${carroSeleccionado}_${noDisponibles}`;
+        alert(`La netbook N° ${noDisponibles} del ${carroSeleccionado} no está disponible (${inventarioEquipos[key].estado}).`);
         return;
     }
 
-    const ocupadas = getOcupiedNetbooks();
+    // Validar préstamos activos en ese mismo carro
+    const ocupadas = getOcupiedNetbooksByCarro(carroSeleccionado);
     const ocupiedFound = selectedNetbooks.find(nb => ocupadas.has(nb));
     if (ocupiedFound) {
-        alert(`La netbook N° ${ocupiedFound} ya se encuentra prestada.`);
+        alert(`La netbook N° ${ocupiedFound} del ${carroSeleccionado} ya se encuentra prestada.`);
         return;
     }
 
@@ -441,7 +474,7 @@ function handleSubmit(e) {
         fecha: document.getElementById('fecha').value,
         turno: document.getElementById('turno').value,
         sector: document.getElementById('sector').value,
-        carro: document.getElementById('carro').value,
+        carro: carroSeleccionado,
         docente: docenteInput,
         area: areaInput,
         email: emailInput,
