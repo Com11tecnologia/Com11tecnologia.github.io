@@ -1,12 +1,11 @@
-// Mapeo de Carros según Sector
+ // Mapeo de Carros según Sector
 const carrosPorSector = {
     'Biblioteca': ['Carro C', 'Carro E'],
     'Espacio Digital': ['Carro D', 'Carro G'],
     'Secretaría': ['Carro A', 'Carro B', 'Carro F']
 };
 
-// Base de datos de docentes precargados de la planilla
-const docentesData = [
+const docentesDefault = [
     { nombre: "Carlos Alberto", apellido: "Barbieri", area: "AREA CONTABLES", email: "carlos.barbieri@bue.edu.ar" },
     { nombre: "Eduardo", apellido: "Yugdar", area: "AREA CONTABLES", email: "eduardo.yugdar@bue.edu.ar" },
     { nombre: "Alicia", apellido: "Ozuna", area: "AREA DE EXACTAS", email: "alicia.ozuna@bue.edu.ar" },
@@ -15,22 +14,39 @@ const docentesData = [
     { nombre: "Agostina", apellido: "Paz", area: "AREA COMUNICACIÓN", email: "agostina.calienno@bue.edu.ar" }
 ];
 
-// Cargar préstamos guardados en el navegador (localStorage) o iniciar vacío
+let docentesData = JSON.parse(localStorage.getItem('docentes_netbooks')) || docentesDefault;
 let prestamos = JSON.parse(localStorage.getItem('prestamos_netbooks')) || [];
+
+// Inventario extendido por cada Netbook (1 al 40)
+// Estructura: { "1": { idActivo: "ACT-001", estado: "Disponible", mantenimiento: "Limpieza general 12/09" } }
+let inventarioEquipos = JSON.parse(localStorage.getItem('inventario_equipos')) || {};
+
+// Inicializar inventario si está vacío
+for (let i = 1; i <= 40; i++) {
+    const key = String(i);
+    if (!inventarioEquipos[key]) {
+        inventarioEquipos[key] = {
+            idActivo: `NET-2026-${String(i).padStart(3, '0')}`,
+            estado: 'Disponible',
+            mantenimiento: 'Sin registros de fallas.'
+        };
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
     populateDocentesList();
+    handleInvSectorChange();
     updateUI();
 });
 
-// Guardar en el almacenamiento del navegador
 function saveToLocalStorage() {
     localStorage.setItem('prestamos_netbooks', JSON.stringify(prestamos));
+    localStorage.setItem('docentes_netbooks', JSON.stringify(docentesData));
+    localStorage.setItem('inventario_equipos', JSON.stringify(inventarioEquipos));
 }
 
-// Obtener conjunto de netbooks que están ocupadas actualmente (estado 'Asignada')
 function getOcupiedNetbooks() {
     const ocupadas = new Set();
     prestamos.forEach(p => {
@@ -41,7 +57,6 @@ function getOcupiedNetbooks() {
     return ocupadas;
 }
 
-// Renderizar la grilla de casillas (1 a 40) bloqueando las prestadas
 function renderNetbooksGrid() {
     const grid = document.getElementById('netbooks-grid');
     const ocupadas = getOcupiedNetbooks();
@@ -50,21 +65,43 @@ function renderNetbooksGrid() {
     for (let i = 1; i <= 40; i++) {
         const strNum = String(i);
         const isOcupied = ocupadas.has(strNum);
+        const equipo = inventarioEquipos[strNum] || { estado: 'Disponible' };
+        const estado = equipo.estado;
 
-        if (isOcupied) {
-            // Casilla Deshabilitada (Netbook ya prestada)
+        if (estado === 'Roto' || estado === 'Bajo reparación') {
+            grid.innerHTML += `
+                <div>
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-amber-400 bg-amber-50 text-amber-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} (${estado}) - Activo: ${equipo.idActivo}">
+                        <i data-lucide="wrench" class="w-4 h-4 mb-1 text-amber-600"></i>
+                        <span class="text-xs font-bold">N° ${i}</span>
+                        <span class="text-[9px] font-bold tracking-wider uppercase text-amber-800">${estado}</span>
+                    </label>
+                </div>
+            `;
+        } else if (estado === 'Arrendado') {
+            grid.innerHTML += `
+                <div>
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-purple-300 bg-purple-50 text-purple-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Arrendado">
+                        <i data-lucide="file-contract" class="w-4 h-4 mb-1 text-purple-600"></i>
+                        <span class="text-xs font-bold">N° ${i}</span>
+                        <span class="text-[9px] font-bold tracking-wider uppercase text-purple-800">Arrendado</span>
+                    </label>
+                </div>
+            `;
+        } else if (isOcupied) {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} actualmente prestado">
                         <i data-lucide="lock" class="w-4 h-4 mb-1 text-red-500"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
-                        <span class="text-[9px] font-bold tracking-wider uppercase text-red-600">Ocupada</span>
+                        <span class="text-[9px] font-bold tracking-wider uppercase text-red-600">Prestada</span>
                     </label>
                 </div>
             `;
         } else {
-            // Casilla Disponible (Verde al seleccionar)
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" class="hidden netbook-checkbox">
@@ -80,14 +117,131 @@ function renderNetbooksGrid() {
     lucide.createIcons();
 }
 
+// INVENTARIO Y MANTENIMIENTO POR CARRO
+function handleInvSectorChange() {
+    const sector = document.getElementById('inv-sector').value;
+    const selectCarro = document.getElementById('inv-carro');
+    selectCarro.innerHTML = '';
+
+    if (carrosPorSector[sector]) {
+        carrosPorSector[sector].forEach(carro => {
+            const opt = document.createElement('option');
+            opt.value = carro;
+            opt.textContent = carro;
+            selectCarro.appendChild(opt);
+        });
+    }
+    renderInventarioTable();
+}
+
+function renderInventarioTable() {
+    const tbody = document.getElementById('inventario-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    for (let i = 1; i <= 40; i++) {
+        const key = String(i);
+        const eq = inventarioEquipos[key] || { idActivo: 'N/A', estado: 'Disponible', mantenimiento: '' };
+
+        let badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        if (eq.estado === 'Roto' || eq.estado === 'Bajo reparación') badgeStyle = 'bg-amber-100 text-amber-800 border-amber-200';
+        if (eq.estado === 'Arrendado') badgeStyle = 'bg-purple-100 text-purple-800 border-purple-200';
+
+        tbody.innerHTML += `
+            <tr class="hover:bg-slate-50 transition">
+                <td class="px-4 py-2.5 font-bold text-slate-800">Netbook N° ${i}</td>
+                <td class="px-4 py-2.5 text-xs font-mono text-slate-600">${eq.idActivo}</td>
+                <td class="px-4 py-2.5">
+                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full border ${badgeStyle}">
+                        ${eq.estado}
+                    </span>
+                </td>
+                <td class="px-4 py-2.5 text-xs text-slate-500 max-w-xs truncate">${eq.mantenimiento}</td>
+                <td class="px-4 py-2.5 text-right">
+                    <button onclick="openInventarioModal(${i})" class="p-1 text-slate-500 hover:text-blue-600" title="Editar Activo / Mantenimiento">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+    lucide.createIcons();
+}
+
+function openInventarioModal(nbNumber) {
+    const key = String(nbNumber);
+    const eq = inventarioEquipos[key] || { idActivo: '', estado: 'Disponible', mantenimiento: '' };
+
+    document.getElementById('inv-edit-nb-id').value = key;
+    document.getElementById('inv-modal-title').textContent = `Editar Netbook N° ${nbNumber}`;
+    document.getElementById('inv-modal-activo').value = eq.idActivo;
+    document.getElementById('inv-modal-estado').value = eq.estado;
+    document.getElementById('inv-modal-mantenimiento').value = eq.mantenimiento;
+
+    const modal = document.getElementById('inventario-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeInventarioModal() {
+    const modal = document.getElementById('inventario-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function saveInventarioItem() {
+    const key = document.getElementById('inv-edit-nb-id').value;
+    const activo = document.getElementById('inv-modal-activo').value.trim() || 'N/A';
+    const estado = document.getElementById('inv-modal-estado').value;
+    const mantenimiento = document.getElementById('inv-modal-mantenimiento').value.trim() || 'Sin notas.';
+
+    inventarioEquipos[key] = {
+        idActivo: activo,
+        estado: estado,
+        mantenimiento: mantenimiento
+    };
+
+    saveToLocalStorage();
+    renderInventarioTable();
+    updateUI();
+    closeInventarioModal();
+}
+
+// DOCENTES, COMUNICACIÓN Y FORMULARIO DE PRÉSTAMOS
 function populateDocentesList() {
     const datalist = document.getElementById('docentes_list');
+    if (!datalist) return;
     datalist.innerHTML = '';
     docentesData.forEach(d => {
         const option = document.createElement('option');
         option.value = `${d.apellido}, ${d.nombre}`;
         datalist.appendChild(option);
     });
+}
+
+function renderDocentesTable() {
+    const tbody = document.getElementById('docentes-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    docentesData.forEach((d, idx) => {
+        tbody.innerHTML += `
+            <tr class="hover:bg-slate-50 transition">
+                <td class="px-4 py-2.5 font-semibold text-slate-800">${d.apellido}, ${d.nombre}</td>
+                <td class="px-4 py-2.5 text-xs text-slate-600">${d.area || 'N/A'}</td>
+                <td class="px-4 py-2.5 text-xs text-slate-500">${d.email || 'N/A'}</td>
+                <td class="px-4 py-2.5 text-right space-x-1">
+                    <button onclick="editDocente(${idx})" class="p-1 text-slate-500 hover:text-blue-600" title="Modificar">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="deleteDocente(${idx})" class="p-1 text-slate-500 hover:text-red-600" title="Eliminar">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    lucide.createIcons();
 }
 
 function handleDocenteSelect() {
@@ -98,6 +252,35 @@ function handleDocenteSelect() {
         document.getElementById('area').value = found.area || '';
         document.getElementById('email').value = found.email || '';
     }
+}
+
+function saveOrUpdateDocente(docenteStr, areaStr, emailStr) {
+    if (!docenteStr) return;
+
+    let nombre = docenteStr;
+    let apellido = "";
+
+    if (docenteStr.includes(",")) {
+        const parts = docenteStr.split(",");
+        apellido = parts[0].trim();
+        nombre = parts[1].trim();
+    } else if (docenteStr.includes(" ")) {
+        const parts = docenteStr.split(" ");
+        apellido = parts.pop();
+        nombre = parts.join(" ");
+    }
+
+    const idx = docentesData.findIndex(d => `${d.apellido}, ${d.nombre}`.toLowerCase() === docenteStr.toLowerCase() || `${d.nombre} ${d.apellido}`.toLowerCase() === docenteStr.toLowerCase());
+
+    if (idx !== -1) {
+        if (areaStr && areaStr !== 'N/A') docentesData[idx].area = areaStr;
+        if (emailStr && emailStr !== 'N/A') docentesData[idx].email = emailStr;
+    } else {
+        docentesData.push({ nombre, apellido, area: areaStr || 'N/A', email: emailStr || 'N/A' });
+    }
+
+    populateDocentesList();
+    renderDocentesTable();
 }
 
 function handleSectorChange() {
@@ -128,20 +311,32 @@ function selectAll(status) {
 function handleSubmit(e) {
     e.preventDefault();
 
-    const selectedNetbooks = Array.from(document.querySelectorAll('input[name="netbooks"]:checked')).map(cb => cb.value);
+    const selectedNetbooks = Array.from(document.querySelectorAll('input[name="netbooks"]:checked')).map(cb => String(cb.value));
 
     if (selectedNetbooks.length === 0) {
         alert("Por favor seleccione al menos una netbook disponible (1-40).");
         return;
     }
 
-    // Verificar doble confirmación de disponibilidad
-    const ocupadas = getOcupiedNetbooks();
-    const conflicto = selectedNetbooks.find(nb => ocupadas.has(String(nb)));
-    if (conflicto) {
-        alert(`La netbook N° ${conflicto} ya se encuentra prestada y no puede asignarse de nuevo.`);
+    // Verificar disponibilidad según inventario
+    const noDisponibles = selectedNetbooks.find(nb => inventarioEquipos[nb] && inventarioEquipos[nb].estado !== 'Disponible');
+    if (noDisponibles) {
+        alert(`La netbook N° ${noDisponibles} no está disponible (${inventarioEquipos[noDisponibles].estado}).`);
         return;
     }
+
+    const ocupadas = getOcupiedNetbooks();
+    const ocupiedFound = selectedNetbooks.find(nb => ocupadas.has(nb));
+    if (ocupiedFound) {
+        alert(`La netbook N° ${ocupiedFound} ya se encuentra prestada.`);
+        return;
+    }
+
+    const docenteInput = document.getElementById('docente_input').value;
+    const areaInput = document.getElementById('area').value || 'N/A';
+    const emailInput = document.getElementById('email').value || 'N/A';
+
+    saveOrUpdateDocente(docenteInput, areaInput, emailInput);
 
     const record = {
         id: Date.now(),
@@ -149,9 +344,9 @@ function handleSubmit(e) {
         turno: document.getElementById('turno').value,
         sector: document.getElementById('sector').value,
         carro: document.getElementById('carro').value,
-        docente: document.getElementById('docente_input').value,
-        area: document.getElementById('area').value || 'N/A',
-        email: document.getElementById('email').value || 'N/A',
+        docente: docenteInput,
+        area: areaInput,
+        email: emailInput,
         estudiante: (document.getElementById('estudiante_apellido').value || document.getElementById('estudiante_nombre').value)
             ? `${document.getElementById('estudiante_apellido').value} ${document.getElementById('estudiante_nombre').value}`.trim() 
             : 'N/A',
@@ -214,8 +409,8 @@ function resetForm() {
 function updateUI() {
     const todayStr = new Date().toISOString().split('T')[0];
 
-    // Re-renderizar grilla para deshabilitar las netbooks prestadas actualmente
     renderNetbooksGrid();
+    renderDocentesTable();
 
     const hoyAsignadas = prestamos
         .filter(p => p.fecha === todayStr && p.estado === 'Asignada')
@@ -284,7 +479,6 @@ function updateUI() {
     lucide.createIcons();
 }
 
-// Función para exportar la planilla a un archivo CSV
 function exportToCSV() {
     if (prestamos.length === 0) {
         alert("No hay registros en el historial para exportar.");
