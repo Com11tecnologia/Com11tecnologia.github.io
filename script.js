@@ -16,12 +16,9 @@ const docentesDefault = [
 
 let docentesData = JSON.parse(localStorage.getItem('docentes_netbooks')) || docentesDefault;
 let prestamos = JSON.parse(localStorage.getItem('prestamos_netbooks')) || [];
-
-// Inventario extendido por cada Netbook (1 al 40)
-// Estructura: { "1": { idActivo: "ACT-001", estado: "Disponible", mantenimiento: "Limpieza general 12/09" } }
 let inventarioEquipos = JSON.parse(localStorage.getItem('inventario_equipos')) || {};
 
-// Inicializar inventario si está vacío
+// Inicializar inventario de los 40 equipos si no existe
 for (let i = 1; i <= 40; i++) {
     const key = String(i);
     if (!inventarioEquipos[key]) {
@@ -59,6 +56,8 @@ function getOcupiedNetbooks() {
 
 function renderNetbooksGrid() {
     const grid = document.getElementById('netbooks-grid');
+    if (!grid) return;
+
     const ocupadas = getOcupiedNetbooks();
     grid.innerHTML = '';
 
@@ -94,7 +93,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} actualmente prestado">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} prestado actualmente">
                         <i data-lucide="lock" class="w-4 h-4 mb-1 text-red-500"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-bold tracking-wider uppercase text-red-600">Prestada</span>
@@ -117,12 +116,12 @@ function renderNetbooksGrid() {
     lucide.createIcons();
 }
 
-// INVENTARIO Y MANTENIMIENTO POR CARRO
 function handleInvSectorChange() {
     const sector = document.getElementById('inv-sector').value;
     const selectCarro = document.getElementById('inv-carro');
-    selectCarro.innerHTML = '';
+    if (!selectCarro) return;
 
+    selectCarro.innerHTML = '';
     if (carrosPorSector[sector]) {
         carrosPorSector[sector].forEach(carro => {
             const opt = document.createElement('option');
@@ -207,7 +206,6 @@ function saveInventarioItem() {
     closeInventarioModal();
 }
 
-// DOCENTES, COMUNICACIÓN Y FORMULARIO DE PRÉSTAMOS
 function populateDocentesList() {
     const datalist = document.getElementById('docentes_list');
     if (!datalist) return;
@@ -242,6 +240,107 @@ function renderDocentesTable() {
         `;
     });
     lucide.createIcons();
+}
+
+function openDocenteModal(idx = -1) {
+    document.getElementById('edit-docente-index').value = idx;
+    if (idx >= 0) {
+        document.getElementById('modal-title').textContent = "Editar Docente";
+        document.getElementById('modal-apellido').value = docentesData[idx].apellido;
+        document.getElementById('modal-nombre').value = docentesData[idx].nombre;
+        document.getElementById('modal-area').value = docentesData[idx].area;
+        document.getElementById('modal-email').value = docentesData[idx].email;
+    } else {
+        document.getElementById('modal-title').textContent = "Agregar Docente";
+        document.getElementById('modal-apellido').value = "";
+        document.getElementById('modal-nombre').value = "";
+        document.getElementById('modal-area').value = "";
+        document.getElementById('modal-email').value = "";
+    }
+    const modal = document.getElementById('docente-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeDocenteModal() {
+    const modal = document.getElementById('docente-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function saveDocenteFromModal() {
+    const idx = parseInt(document.getElementById('edit-docente-index').value);
+    const apellido = document.getElementById('modal-apellido').value.trim();
+    const nombre = document.getElementById('modal-nombre').value.trim();
+    const area = document.getElementById('modal-area').value.trim() || 'N/A';
+    const email = document.getElementById('modal-email').value.trim() || 'N/A';
+
+    if (!nombre || !apellido) {
+        alert("Por favor completa nombre y apellido.");
+        return;
+    }
+
+    if (idx >= 0) {
+        docentesData[idx] = { nombre, apellido, area, email };
+    } else {
+        docentesData.push({ nombre, apellido, area, email });
+    }
+
+    saveToLocalStorage();
+    populateDocentesList();
+    renderDocentesTable();
+    closeDocenteModal();
+}
+
+function editDocente(idx) {
+    openDocenteModal(idx);
+}
+
+function deleteDocente(idx) {
+    if (confirm(`¿Deseas eliminar a ${docentesData[idx].apellido}, ${docentesData[idx].nombre}?`)) {
+        docentesData.splice(idx, 1);
+        saveToLocalStorage();
+        populateDocentesList();
+        renderDocentesTable();
+    }
+}
+
+function importDocentesCSV(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const text = e.target.result;
+        const lines = text.split(/\r\n|\n/);
+        let agregados = 0;
+
+        lines.forEach((line, index) => {
+            if (index === 0 || !line.trim()) return;
+            const parts = line.split(/;|,/);
+            
+            if (parts.length >= 2) {
+                const nombre = parts[0] ? parts[0].replace(/"/g, '').trim() : '';
+                const apellido = parts[1] ? parts[1].replace(/"/g, '').trim() : '';
+                const area = parts[2] ? parts[2].replace(/"/g, '').trim() : 'N/A';
+                const email = parts[3] ? parts[3].replace(/"/g, '').trim() : 'N/A';
+
+                if (nombre && apellido) {
+                    const exists = docentesData.some(d => d.nombre.toLowerCase() === nombre.toLowerCase() && d.apellido.toLowerCase() === apellido.toLowerCase());
+                    if (!exists) {
+                        docentesData.push({ nombre, apellido, area, email });
+                        agregados++;
+                    }
+                }
+            }
+        });
+
+        saveToLocalStorage();
+        populateDocentesList();
+        renderDocentesTable();
+        alert(`Se importaron ${agregados} docentes correctamente.`);
+    };
+    reader.readAsText(file);
 }
 
 function handleDocenteSelect() {
@@ -318,7 +417,6 @@ function handleSubmit(e) {
         return;
     }
 
-    // Verificar disponibilidad según inventario
     const noDisponibles = selectedNetbooks.find(nb => inventarioEquipos[nb] && inventarioEquipos[nb].estado !== 'Disponible');
     if (noDisponibles) {
         alert(`La netbook N° ${noDisponibles} no está disponible (${inventarioEquipos[noDisponibles].estado}).`);
@@ -424,6 +522,7 @@ function updateUI() {
     document.getElementById('counter-devueltas').textContent = hoyDevueltas;
 
     const tbody = document.getElementById('records-table-body');
+    if (!tbody) return;
     tbody.innerHTML = '';
 
     if (prestamos.length === 0) {
