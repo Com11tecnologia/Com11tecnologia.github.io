@@ -36,7 +36,7 @@ todosLosCarros.forEach(carro => {
 document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-    saveToLocalStorage(); // Guardado inicial
+    saveToLocalStorage();
     populateDocentesList();
     handleInvSectorChange();
     updateUI();
@@ -123,21 +123,32 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-slate-400 bg-slate-200 text-slate-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Desaparecido">
-                        <i data-lucide="ghost" class="w-4 h-4 mb-1 text-slate-600"></i>
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-purple-400 bg-purple-100 text-purple-900 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Desaparecido">
+                        <i data-lucide="ghost" class="w-4 h-4 mb-1 text-purple-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
-                        <span class="text-[9px] font-bold tracking-wider uppercase text-slate-700">Desaparecido</span>
+                        <span class="text-[9px] font-extrabold tracking-wider uppercase text-purple-900">Desaparecido</span>
                     </label>
                 </div>
             `;
-        } else if (estado === 'Roto' || estado === 'Bajo reparación') {
+        } else if (estado === 'Roto') {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-amber-400 bg-amber-50 text-amber-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} (${estado})">
-                        <i data-lucide="wrench" class="w-4 h-4 mb-1 text-amber-600"></i>
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-rose-400 bg-rose-100 text-rose-900 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Roto">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 mb-1 text-rose-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
-                        <span class="text-[9px] font-bold tracking-wider uppercase text-amber-800">${estado}</span>
+                        <span class="text-[9px] font-extrabold tracking-wider uppercase text-rose-900">Roto</span>
+                    </label>
+                </div>
+            `;
+        } else if (estado === 'Bajo reparación') {
+            grid.innerHTML += `
+                <div>
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-amber-400 bg-amber-100 text-amber-900 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Bajo reparación">
+                        <i data-lucide="wrench" class="w-4 h-4 mb-1 text-amber-700"></i>
+                        <span class="text-xs font-bold">N° ${i}</span>
+                        <span class="text-[9px] font-extrabold tracking-wider uppercase text-amber-900">Reparación</span>
                     </label>
                 </div>
             `;
@@ -145,10 +156,10 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-purple-300 bg-purple-50 text-purple-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Arrendado">
-                        <i data-lucide="file-contract" class="w-4 h-4 mb-1 text-purple-600"></i>
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-sky-400 bg-sky-100 text-sky-900 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Arrendado">
+                        <i data-lucide="file-contract" class="w-4 h-4 mb-1 text-sky-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
-                        <span class="text-[9px] font-bold tracking-wider uppercase text-purple-800">Arrendado</span>
+                        <span class="text-[9px] font-extrabold tracking-wider uppercase text-sky-900">Arrendado</span>
                     </label>
                 </div>
             `;
@@ -156,7 +167,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} prestado">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-600 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} prestado">
                         <i data-lucide="lock" class="w-4 h-4 mb-1 text-red-500"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-bold tracking-wider uppercase text-red-600">Prestada</span>
@@ -168,7 +179,7 @@ function renderNetbooksGrid() {
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" class="hidden netbook-checkbox">
                     <label for="nb_${i}" class="netbook-card flex flex-col items-center justify-center p-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-400 cursor-pointer select-none">
-                        <i data-lucide="laptop" class="w-4 h-4 mb-1"></i>
+                        <i data-lucide="laptop" class="w-4 h-4 mb-1 text-slate-600"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-medium text-emerald-600">Disponible</span>
                     </label>
@@ -236,16 +247,17 @@ function renderInventarioTable() {
         const eq = inventarioEquipos[key] || { idActivo: 'N/A', estado: 'Disponible', mantenimiento: '' };
 
         let badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-        if (eq.estado === 'Roto' || eq.estado === 'Bajo reparación') badgeStyle = 'bg-amber-100 text-amber-800 border-amber-200';
-        if (eq.estado === 'Arrendado') badgeStyle = 'bg-purple-100 text-purple-800 border-purple-200';
-        if (eq.estado === 'Desaparecido') badgeStyle = 'bg-slate-200 text-slate-800 border-slate-300';
+        if (eq.estado === 'Roto') badgeStyle = 'bg-rose-100 text-rose-800 border-rose-200';
+        if (eq.estado === 'Bajo reparación') badgeStyle = 'bg-amber-100 text-amber-800 border-amber-200';
+        if (eq.estado === 'Arrendado') badgeStyle = 'bg-sky-100 text-sky-800 border-sky-200';
+        if (eq.estado === 'Desaparecido') badgeStyle = 'bg-purple-100 text-purple-800 border-purple-200';
 
         tbody.innerHTML += `
             <tr class="hover:bg-slate-50 transition">
                 <td class="px-4 py-2.5 font-bold text-slate-800">${carroSeleccionado} - N° ${i}</td>
                 <td class="px-4 py-2.5 text-xs font-mono text-slate-600">${eq.idActivo}</td>
                 <td class="px-4 py-2.5">
-                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full border ${badgeStyle}">
+                    <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full border ${badgeStyle}">
                         ${eq.estado}
                     </span>
                 </td>
