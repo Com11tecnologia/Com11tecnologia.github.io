@@ -18,7 +18,7 @@ let docentesData = JSON.parse(localStorage.getItem('docentes_netbooks')) || doce
 let prestamos = JSON.parse(localStorage.getItem('prestamos_netbooks')) || [];
 let inventarioEquipos = JSON.parse(localStorage.getItem('inventario_equipos')) || {};
 
-// Inicializar inventario por Carro y N° de equipo si no existe
+// Inicialización de los 40 equipos por carro
 const todosLosCarros = ['Carro A', 'Carro B', 'Carro C', 'Carro D', 'Carro E', 'Carro F', 'Carro G'];
 todosLosCarros.forEach(carro => {
     for (let i = 1; i <= 40; i++) {
@@ -36,6 +36,7 @@ todosLosCarros.forEach(carro => {
 document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+    saveToLocalStorage(); // Guardado inicial
     populateDocentesList();
     handleInvSectorChange();
     updateUI();
@@ -47,7 +48,50 @@ function saveToLocalStorage() {
     localStorage.setItem('inventario_equipos', JSON.stringify(inventarioEquipos));
 }
 
-// Obtiene los números de netbooks ocupados para un CARRO ESPECÍFICO
+// FUNCIONES DE COPIA DE SEGURIDAD GENERAL (BACKUP)
+function exportBackupJSON() {
+    const backupData = {
+        prestamos: prestamos,
+        docentes: docentesData,
+        inventario: inventarioEquipos
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `Backup_Netbooks_${new Date().toISOString().split('T')[0]}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+function importBackupJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            if (importedData.docentes && importedData.inventario) {
+                prestamos = importedData.prestamos || [];
+                docentesData = importedData.docentes || [];
+                inventarioEquipos = importedData.inventario || {};
+
+                saveToLocalStorage();
+                populateDocentesList();
+                handleInvSectorChange();
+                updateUI();
+                alert("Backup restaurado correctamente.");
+            } else {
+                alert("El archivo subido no tiene un formato válido.");
+            }
+        } catch (err) {
+            alert("Error al procesar el archivo de backup.");
+        }
+    };
+    reader.readAsText(file);
+}
+
 function getOcupiedNetbooksByCarro(carroTarget) {
     const ocupadas = new Set();
     if (!carroTarget) return ocupadas;
@@ -60,7 +104,6 @@ function getOcupiedNetbooksByCarro(carroTarget) {
     return ocupadas;
 }
 
-// Renderiza las 40 casillas según el carro actualmente seleccionado en el formulario
 function renderNetbooksGrid() {
     const grid = document.getElementById('netbooks-grid');
     if (!grid) return;
@@ -76,11 +119,22 @@ function renderNetbooksGrid() {
         const equipo = inventarioEquipos[keyInventario] || { estado: 'Disponible' };
         const estado = equipo.estado;
 
-        if (estado === 'Roto' || estado === 'Bajo reparación') {
+        if (estado === 'Desaparecido') {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-amber-400 bg-amber-50 text-amber-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} (${estado}) en ${carroSeleccionado}">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-slate-400 bg-slate-200 text-slate-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Desaparecido">
+                        <i data-lucide="ghost" class="w-4 h-4 mb-1 text-slate-600"></i>
+                        <span class="text-xs font-bold">N° ${i}</span>
+                        <span class="text-[9px] font-bold tracking-wider uppercase text-slate-700">Desaparecido</span>
+                    </label>
+                </div>
+            `;
+        } else if (estado === 'Roto' || estado === 'Bajo reparación') {
+            grid.innerHTML += `
+                <div>
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-amber-400 bg-amber-50 text-amber-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} (${estado})">
                         <i data-lucide="wrench" class="w-4 h-4 mb-1 text-amber-600"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-bold tracking-wider uppercase text-amber-800">${estado}</span>
@@ -91,7 +145,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-purple-300 bg-purple-50 text-purple-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Arrendado en ${carroSeleccionado}">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-purple-300 bg-purple-50 text-purple-700 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Arrendado">
                         <i data-lucide="file-contract" class="w-4 h-4 mb-1 text-purple-600"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-bold tracking-wider uppercase text-purple-800">Arrendado</span>
@@ -102,7 +156,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} prestado en ${carroSeleccionado}">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} prestado">
                         <i data-lucide="lock" class="w-4 h-4 mb-1 text-red-500"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-bold tracking-wider uppercase text-red-600">Prestada</span>
@@ -147,14 +201,12 @@ function handleSectorChange() {
     renderNetbooksGrid();
 }
 
-// Al cambiar el carro en el formulario de préstamos, re-renderiza las 40 casillas de ese carro
 document.addEventListener("change", (e) => {
     if (e.target && e.target.id === 'carro') {
         renderNetbooksGrid();
     }
 });
 
-// INVENTARIO Y MANTENIMIENTO POR CARRO
 function handleInvSectorChange() {
     const sector = document.getElementById('inv-sector').value;
     const selectCarro = document.getElementById('inv-carro');
@@ -186,6 +238,7 @@ function renderInventarioTable() {
         let badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-200';
         if (eq.estado === 'Roto' || eq.estado === 'Bajo reparación') badgeStyle = 'bg-amber-100 text-amber-800 border-amber-200';
         if (eq.estado === 'Arrendado') badgeStyle = 'bg-purple-100 text-purple-800 border-purple-200';
+        if (eq.estado === 'Desaparecido') badgeStyle = 'bg-slate-200 text-slate-800 border-slate-300';
 
         tbody.innerHTML += `
             <tr class="hover:bg-slate-50 transition">
@@ -419,6 +472,7 @@ function saveOrUpdateDocente(docenteStr, areaStr, emailStr) {
         docentesData.push({ nombre, apellido, area: areaStr || 'N/A', email: emailStr || 'N/A' });
     }
 
+    saveToLocalStorage();
     populateDocentesList();
     renderDocentesTable();
 }
@@ -443,7 +497,6 @@ function handleSubmit(e) {
         return;
     }
 
-    // Validar disponibilidad por inventario específico del carro
     const noDisponibles = selectedNetbooks.find(nb => {
         const key = `${carroSeleccionado}_${nb}`;
         return inventarioEquipos[key] && inventarioEquipos[key].estado !== 'Disponible';
@@ -455,7 +508,6 @@ function handleSubmit(e) {
         return;
     }
 
-    // Validar préstamos activos en ese mismo carro
     const ocupadas = getOcupiedNetbooksByCarro(carroSeleccionado);
     const ocupiedFound = selectedNetbooks.find(nb => ocupadas.has(nb));
     if (ocupiedFound) {
