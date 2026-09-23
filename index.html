@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full bg-slate-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,88 +9,82 @@
     <!-- Iconos Lucide CDN -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
     <!-- Fuente Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen">
+<body class="bg-slate-100 text-slate-800 antialiased min-h-full flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
 
-    <!-- ENCABEZADO Y MÉTRICAS -->
-    <header class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <!-- ENCABEZADO MODERNO CON MÉTRICAS -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div class="flex items-center space-x-3">
-                    <div class="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
-                        <i data-lucide="laptop" class="w-8 h-8 text-blue-200"></i>
+                <div class="flex items-center space-x-3.5">
+                    <div class="p-2.5 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl shadow-md shadow-blue-500/20 ring-1 ring-white/20">
+                        <i data-lucide="laptop" class="w-6 h-6 text-white"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Espacio Digital - Control de Netbooks</h1>
-                        <p class="text-xs sm:text-sm text-blue-100/80">Registro diario de préstamos y devolución de equipos</p>
+                        <div class="flex items-center space-x-2">
+                            <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">Espacio Digital</h1>
+                            <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 rounded-full border border-blue-500/30">Netbooks</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Control unificado de préstamos, carros e inventario de equipos</p>
                     </div>
                 </div>
 
-                <!-- Métricas diarias -->
-                <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-md p-2 sm:p-3 rounded-xl border border-white/20 shadow-inner">
-                    <div class="text-center px-3 py-1 bg-blue-950/40 rounded-lg">
-                        <span class="block text-xs font-medium text-blue-200 uppercase tracking-wider">Hoy Asignadas</span>
-                        <span id="counter-asignadas" class="text-2xl font-extrabold text-amber-300">0</span>
+                <!-- Tarjetas de Métricas -->
+                <div class="flex items-center space-x-3 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/60 shadow-inner">
+                    <div class="flex items-center space-x-2.5 px-3 py-1.5 bg-slate-900/60 rounded-lg">
+                        <div class="p-1 bg-amber-500/20 text-amber-400 rounded-md">
+                            <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hoy Asignadas</span>
+                            <span id="counter-asignadas" class="text-lg font-extrabold text-amber-400 leading-none">0</span>
+                        </div>
                     </div>
-                    <div class="h-8 w-px bg-white/20"></div>
-                    <div class="text-center px-3 py-1 bg-blue-950/40 rounded-lg">
-                        <span class="block text-xs font-medium text-blue-200 uppercase tracking-wider">Hoy Devueltas</span>
-                        <span id="counter-devueltas" class="text-2xl font-extrabold text-emerald-300">0</span>
+                    
+                    <div class="flex items-center space-x-2.5 px-3 py-1.5 bg-slate-900/60 rounded-lg">
+                        <div class="p-1 bg-emerald-500/20 text-emerald-400 rounded-md">
+                            <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hoy Devueltas</span>
+                            <span id="counter-devueltas" class="text-lg font-extrabold text-emerald-400 leading-none">0</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
-        <!-- BOTONES DE BACKUP / COPIA DE SEGURIDAD GENERAL -->
-        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center space-x-3">
-                <i data-lucide="shield-check" class="w-6 h-6 text-blue-600"></i>
-                <div>
-                    <h4 class="text-sm font-semibold text-blue-900">Copia de Seguridad de Datos</h4>
-                    <p class="text-xs text-blue-700">Guarda o restaura en un archivo todos tus datos de docentes, inventario y préstamos.</p>
-                </div>
-            </div>
-            <div class="flex items-center space-x-2">
-                <button onclick="exportBackupJSON()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center space-x-1">
-                    <i data-lucide="download" class="w-4 h-4"></i>
-                    <span>Descargar Backup</span>
-                </button>
-                <label class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition flex items-center space-x-1">
-                    <i data-lucide="upload" class="w-4 h-4"></i>
-                    <span>Restaurar Backup</span>
-                    <input type="file" id="backup-file-input" accept=".json" class="hidden" onchange="importBackupJSON(event)">
-                </label>
-            </div>
-        </div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 flex-1 w-full">
 
         <!-- FORMULARIO DE REGISTRO DE PRÉSTAMO -->
-        <form id="loanForm" class="space-y-8" onsubmit="handleSubmit(event)">
+        <form id="loanForm" class="space-y-6" onsubmit="handleSubmit(event)">
             
             <!-- SECCIÓN 1: DATOS DEL PRÉSTAMO -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div class="flex items-center space-x-3 mb-6 pb-3 border-b border-slate-100">
-                    <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 transition-all hover:shadow-md">
+                <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+                    <div class="p-2 bg-blue-50 text-blue-600 rounded-xl ring-1 ring-blue-500/10">
                         <i data-lucide="calendar" class="w-5 h-5"></i>
                     </div>
-                    <h2 class="text-lg font-semibold text-slate-800">1. Datos del Préstamo</h2>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">1. Datos del Préstamo</h2>
+                        <p class="text-xs text-slate-500">Ubicación, fecha y turno de asignación</p>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     <div>
-                        <label for="fecha" class="block text-sm font-medium text-slate-700 mb-1">Fecha <span class="text-red-500">*</span></label>
+                        <label for="fecha" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Fecha <span class="text-rose-500">*</span></label>
                         <input type="date" id="fecha" name="fecha" required
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            class="w-full rounded-xl border-slate-200 border px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition bg-slate-50/50 focus:bg-white">
                     </div>
 
                     <div>
-                        <label for="turno" class="block text-sm font-medium text-slate-700 mb-1">Turno <span class="text-red-500">*</span></label>
+                        <label for="turno" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Turno <span class="text-rose-500">*</span></label>
                         <select id="turno" name="turno" required
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            class="w-full rounded-xl border-slate-200 border px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition bg-slate-50/50 focus:bg-white">
                             <option value="">Seleccione turno</option>
                             <option value="Mañana">Mañana</option>
                             <option value="Tarde">Tarde</option>
@@ -99,9 +93,9 @@
                     </div>
 
                     <div>
-                        <label for="sector" class="block text-sm font-medium text-slate-700 mb-1">Sector <span class="text-red-500">*</span></label>
+                        <label for="sector" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Sector <span class="text-rose-500">*</span></label>
                         <select id="sector" name="sector" required onchange="handleSectorChange()"
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            class="w-full rounded-xl border-slate-200 border px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition bg-slate-50/50 focus:bg-white">
                             <option value="">Seleccione sector</option>
                             <option value="Biblioteca">Biblioteca</option>
                             <option value="Espacio Digital">Espacio Digital</option>
@@ -110,9 +104,9 @@
                     </div>
 
                     <div>
-                        <label for="carro" class="block text-sm font-medium text-slate-700 mb-1">Carro Asignado <span class="text-red-500">*</span></label>
+                        <label for="carro" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Carro Asignado <span class="text-rose-500">*</span></label>
                         <select id="carro" name="carro" required disabled
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-slate-50">
+                            class="w-full rounded-xl border-slate-200 border px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition bg-slate-100/70 cursor-not-allowed">
                             <option value="">Primero seleccione sector</option>
                         </select>
                     </div>
@@ -120,95 +114,100 @@
             </div>
 
             <!-- SECCIÓN 2: INFORMACIÓN DEL DOCENTE Y ESTUDIANTE -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div class="flex items-center space-x-3 mb-6 pb-3 border-b border-slate-100">
-                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
-                        <i data-lucide="user" class="w-5 h-5"></i>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 transition-all hover:shadow-md">
+                <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-xl ring-1 ring-indigo-500/10">
+                        <i data-lucide="user-check" class="w-5 h-5"></i>
                     </div>
-                    <h2 class="text-lg font-semibold text-slate-800">2. Información del Docente y Estudiante</h2>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">2. Información del Docente y Estudiante</h2>
+                        <p class="text-xs text-slate-500">Datos del responsable y destinatarios</p>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     <div>
-                        <label for="docente_input" class="block text-sm font-medium text-slate-700 mb-1">Apellido y Nombre del Docente <span class="text-red-500">*</span></label>
-                        <input type="text" id="docente_input" list="docentes_list" placeholder="Ingrese o busque docente..." required oninput="handleDocenteSelect()"
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                        <label for="docente_input" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Docente Responsable <span class="text-rose-500">*</span></label>
+                        <input type="text" id="docente_input" list="docentes_list" placeholder="Apellido y Nombre..." required oninput="handleDocenteSelect()"
+                            class="w-full rounded-xl border-slate-200 border px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 outline-none transition bg-slate-50/50 focus:bg-white">
                         <datalist id="docentes_list"></datalist>
                     </div>
 
                     <div>
-                        <label for="area" class="block text-sm font-medium text-slate-700 mb-1">Área <span class="text-xs text-slate-400">(Opcional)</span></label>
+                        <label for="area" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Área <span class="text-[10px] text-slate-400 font-normal lowercase">(opcional)</span></label>
                         <input type="text" id="area" name="area" placeholder="Ej. AREA EXACTAS"
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            class="w-full rounded-xl border-slate-200 border px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 outline-none transition bg-slate-50/50 focus:bg-white">
                     </div>
 
                     <div>
-                        <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Correo Electrónico <span class="text-xs text-slate-400">(Opcional)</span></label>
+                        <label for="email" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Correo Electrónico <span class="text-[10px] text-slate-400 font-normal lowercase">(opcional)</span></label>
                         <input type="email" id="email" name="email" placeholder="docente@bue.edu.ar"
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            class="w-full rounded-xl border-slate-200 border px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 outline-none transition bg-slate-50/50 focus:bg-white">
                     </div>
 
                     <div>
-                        <label for="estudiante_apellido" class="block text-sm font-medium text-slate-700 mb-1">Apellido del Estudiante <span class="text-xs text-slate-400">(Opcional)</span></label>
+                        <label for="estudiante_apellido" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Apellido del Estudiante <span class="text-[10px] text-slate-400 font-normal lowercase">(opcional)</span></label>
                         <input type="text" id="estudiante_apellido" name="estudiante_apellido" placeholder="Apellido del alumno"
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            class="w-full rounded-xl border-slate-200 border px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 outline-none transition bg-slate-50/50 focus:bg-white">
                     </div>
 
                     <div>
-                        <label for="estudiante_nombre" class="block text-sm font-medium text-slate-700 mb-1">Nombre del Estudiante <span class="text-xs text-slate-400">(Opcional)</span></label>
+                        <label for="estudiante_nombre" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Nombre del Estudiante <span class="text-[10px] text-slate-400 font-normal lowercase">(opcional)</span></label>
                         <input type="text" id="estudiante_nombre" name="estudiante_nombre" placeholder="Nombre del alumno"
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            class="w-full rounded-xl border-slate-200 border px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 outline-none transition bg-slate-50/50 focus:bg-white">
                     </div>
 
+                    <!-- REEMPLAZADO N° DE SERIE POR CURSO -->
                     <div>
-                        <label for="numero_serie" class="block text-sm font-medium text-slate-700 mb-1">N° de Serie de Equipo <span class="text-xs text-slate-400">(Opcional)</span></label>
-                        <input type="text" id="numero_serie" name="numero_serie" placeholder="Ej. SN12345678"
-                            class="w-full rounded-lg border-slate-300 border px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                        <label for="curso" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Curso / División <span class="text-[10px] text-slate-400 font-normal lowercase">(opcional)</span></label>
+                        <input type="text" id="curso" name="curso" placeholder="Ej. 3° 2° TT / 5° A"
+                            class="w-full rounded-xl border-slate-200 border px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 outline-none transition bg-slate-50/50 focus:bg-white">
                     </div>
                 </div>
             </div>
 
             <!-- SECCIÓN 3: SELECCIÓN MÚLTIPLE DE COMPUTADORAS (1-40) -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-3 border-b border-slate-100 gap-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 transition-all hover:shadow-md">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
                     <div class="flex items-center space-x-3">
-                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-                            <i data-lucide="grid" class="w-5 h-5"></i>
+                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded-xl ring-1 ring-emerald-500/10">
+                            <i data-lucide="grid-3x3" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <h2 class="text-lg font-semibold text-slate-800">3. Selección de Netbooks (Casillas 1 al 40)</h2>
-                            <p class="text-xs text-slate-500">Selecciona los equipos a retirar (se resaltarán en verde)</p>
+                            <h2 class="text-base font-bold text-slate-900">3. Selección de Netbooks (Casillas 1 al 40)</h2>
+                            <p class="text-xs text-slate-500">Toca las casillas para seleccionar los equipos a retirar</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button type="button" onclick="selectAll(true)" class="px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition">
+                        <button type="button" onclick="selectAll(true)" class="px-3 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition active:scale-95">
                             Marcar Todas
                         </button>
-                        <button type="button" onclick="selectAll(false)" class="px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition">
+                        <button type="button" onclick="selectAll(false)" class="px-3 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition active:scale-95">
                             Desmarcar
                         </button>
                     </div>
                 </div>
 
+                <!-- Grilla de Casillas -->
                 <div class="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-10 gap-2.5" id="netbooks-grid"></div>
             </div>
 
             <!-- ENVIAR CORREO Y ACCIONES -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
                     <input type="checkbox" id="send_email_option" name="send_email_option"
-                        class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
-                    <label for="send_email_option" class="text-sm font-medium text-slate-700 cursor-pointer">
-                        Enviar notificación por correo electrónico al docente (Opcional)
+                        class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                    <label for="send_email_option" class="text-xs sm:text-sm font-medium text-slate-700 cursor-pointer select-none">
+                        Enviar correo electrónico de confirmación al docente <span class="text-slate-400 font-normal">(Opcional)</span>
                     </label>
                 </div>
 
                 <div class="flex items-center space-x-3 w-full md:w-auto justify-end">
-                    <button type="button" onclick="resetForm()" class="px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">
+                    <button type="button" onclick="resetForm()" class="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
                         Limpiar Formulario
                     </button>
-                    <button type="submit" class="px-6 py-2.5 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition flex items-center space-x-2">
-                        <i data-lucide="save" class="w-4 h-4"></i>
+                    <button type="submit" class="px-6 py-2.5 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-500/20 hover:shadow-lg transition active:scale-95 flex items-center space-x-2">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
                         <span>Registrar Préstamo</span>
                     </button>
                 </div>
@@ -216,61 +215,61 @@
         </form>
 
         <!-- INVENTARIO Y MANTENIMIENTO DE EQUIPOS -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h3 class="text-lg font-semibold text-slate-800">Inventario y Mantenimiento de Equipos</h3>
-                    <p class="text-xs text-slate-500">Gestiona ID de activos, estados y observaciones por carro</p>
+                    <h3 class="text-base font-bold text-slate-900">Inventario y Mantenimiento de Equipos</h3>
+                    <p class="text-xs text-slate-500">Gestione estado, activos y observaciones por carro</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3">
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-500 uppercase">Sector</label>
-                        <select id="inv-sector" onchange="handleInvSectorChange()" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Sector</label>
+                        <select id="inv-sector" onchange="handleInvSectorChange()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50">
                             <option value="Biblioteca">Biblioteca</option>
                             <option value="Espacio Digital">Espacio Digital</option>
                             <option value="Secretaría">Secretaría</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-500 uppercase">Carro</label>
-                        <select id="inv-carro" onchange="renderInventarioTable()" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Carro</label>
+                        <select id="inv-carro" onchange="renderInventarioTable()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50">
                         </select>
                     </div>
                 </div>
             </div>
 
             <div class="overflow-x-auto max-h-80 overflow-y-auto">
-                <table class="w-full text-left text-sm text-slate-600">
-                    <thead class="bg-slate-50 text-slate-700 font-medium uppercase text-xs tracking-wider border-b border-slate-200 sticky top-0">
+                <table class="w-full text-left text-xs text-slate-600">
+                    <thead class="bg-slate-50/80 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200/60 sticky top-0">
                         <tr>
-                            <th class="px-4 py-3">N° Netbook</th>
-                            <th class="px-4 py-3">ID Activo</th>
-                            <th class="px-4 py-3">Estado</th>
-                            <th class="px-4 py-3">Mantenimiento / Notas</th>
-                            <th class="px-4 py-3 text-right">Acciones</th>
+                            <th class="px-5 py-3">N° Netbook</th>
+                            <th class="px-5 py-3">ID Activo</th>
+                            <th class="px-5 py-3">Estado</th>
+                            <th class="px-5 py-3">Mantenimiento / Notas</th>
+                            <th class="px-5 py-3 text-right">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="inventario-table-body" class="divide-y divide-slate-100">
+                    <tbody id="inventario-table-body" class="divide-y divide-slate-100 font-medium">
                     </tbody>
                 </table>
             </div>
         </div>
 
         <!-- GESTIÓN DE DOCENTES Y USUARIOS -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h3 class="text-lg font-semibold text-slate-800">Gestión de Docentes y Usuarios</h3>
-                    <p class="text-xs text-slate-500">Administra o importa personas autorizadas desde una planilla</p>
+                    <h3 class="text-base font-bold text-slate-900">Gestión de Docentes y Usuarios</h3>
+                    <p class="text-xs text-slate-500">Administre o importe personas autorizadas desde una planilla CSV</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <label class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition flex items-center space-x-2">
-                        <i data-lucide="file-up" class="w-4 h-4"></i>
-                        <span>Importar Planilla (CSV)</span>
+                    <label class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center space-x-1.5">
+                        <i data-lucide="file-up" class="w-4 h-4 text-slate-500"></i>
+                        <span>Importar CSV</span>
                         <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="importDocentesCSV(event)">
                     </label>
-                    <button onclick="openDocenteModal()" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center space-x-2">
+                    <button onclick="openDocenteModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition flex items-center space-x-1.5">
                         <i data-lucide="user-plus" class="w-4 h-4"></i>
                         <span>Agregar Docente</span>
                     </button>
@@ -278,107 +277,132 @@
             </div>
 
             <div class="overflow-x-auto max-h-72 overflow-y-auto">
-                <table class="w-full text-left text-sm text-slate-600">
-                    <thead class="bg-slate-50 text-slate-700 font-medium uppercase text-xs tracking-wider border-b border-slate-200 sticky top-0">
+                <table class="w-full text-left text-xs text-slate-600">
+                    <thead class="bg-slate-50/80 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200/60 sticky top-0">
                         <tr>
-                            <th class="px-4 py-3">Apellido y Nombre</th>
-                            <th class="px-4 py-3">Área</th>
-                            <th class="px-4 py-3">Correo Electrónico</th>
-                            <th class="px-4 py-3 text-right">Acciones</th>
+                            <th class="px-5 py-3">Apellido y Nombre</th>
+                            <th class="px-5 py-3">Área</th>
+                            <th class="px-5 py-3">Correo Electrónico</th>
+                            <th class="px-5 py-3 text-right">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="docentes-table-body" class="divide-y divide-slate-100">
+                    <tbody id="docentes-table-body" class="divide-y divide-slate-100 font-medium">
                     </tbody>
                 </table>
             </div>
         </div>
 
         <!-- HISTORIAL DE REGISTROS -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h3 class="text-lg font-semibold text-slate-800">Historial de Registros</h3>
-                    <p class="text-xs text-slate-500">Préstamos registrados y devoluciones efectivas</p>
+                    <h3 class="text-base font-bold text-slate-900">Historial de Registros</h3>
+                    <p class="text-xs text-slate-500">Préstamos activos y devoluciones registradas</p>
                 </div>
-                <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center space-x-2">
+                <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm transition flex items-center space-x-2">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
                     <span>Exportar a Excel (.csv)</span>
                 </button>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-600">
-                    <thead class="bg-slate-50 text-slate-700 font-medium uppercase text-xs tracking-wider border-b border-slate-200">
+                <table class="w-full text-left text-xs text-slate-600">
+                    <thead class="bg-slate-50/80 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200/60">
                         <tr>
-                            <th class="px-4 py-3">Fecha</th>
-                            <th class="px-4 py-3">Docente</th>
-                            <th class="px-4 py-3">Área / Mail</th>
-                            <th class="px-4 py-3">Ubicación</th>
-                            <th class="px-4 py-3">Equipos</th>
-                            <th class="px-4 py-3">Estado</th>
-                            <th class="px-4 py-3 text-right">Acciones</th>
+                            <th class="px-5 py-3">Fecha / Turno</th>
+                            <th class="px-5 py-3">Docente</th>
+                            <th class="px-5 py-3">Área / Mail</th>
+                            <th class="px-5 py-3">Ubicación</th>
+                            <th class="px-5 py-3">Curso</th>
+                            <th class="px-5 py-3">Equipos</th>
+                            <th class="px-5 py-3">Estado</th>
+                            <th class="px-5 py-3 text-right">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="records-table-body" class="divide-y divide-slate-100">
+                    <tbody id="records-table-body" class="divide-y divide-slate-100 font-medium">
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- COPIA DE SEGURIDAD (MOVIDA ABAJO DE TODO) -->
+        <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-lg border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-5">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl ring-1 ring-blue-500/20">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-white">Copia de Seguridad de Datos</h4>
+                    <p class="text-xs text-slate-400">Descargue o restaure una copia completa de docentes, inventario y préstamos en archivo JSON.</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 w-full sm:w-auto justify-end">
+                <button onclick="exportBackupJSON()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl shadow-md transition flex items-center space-x-2">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Descargar Backup</span>
+                </button>
+                <label class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 cursor-pointer transition flex items-center space-x-2">
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    <span>Restaurar Backup</span>
+                    <input type="file" id="backup-file-input" accept=".json" class="hidden" onchange="importBackupJSON(event)">
+                </label>
             </div>
         </div>
 
     </main>
 
     <!-- MODAL PARA CREAR / EDITAR DOCENTE -->
-    <div id="docente-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-4">
-            <div class="flex items-center justify-between border-b pb-3">
-                <h3 id="modal-title" class="text-lg font-semibold text-slate-800">Agregar Docente</h3>
-                <button onclick="closeDocenteModal()" class="text-slate-400 hover:text-slate-600">
+    <div id="docente-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 id="modal-title" class="text-base font-bold text-slate-900">Agregar Docente</h3>
+                <button onclick="closeDocenteModal()" class="text-slate-400 hover:text-slate-600 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             <input type="hidden" id="edit-docente-index" value="-1">
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Apellido(s)</label>
-                <input type="text" id="modal-apellido" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Apellido(s)</label>
+                <input type="text" id="modal-apellido" class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre(s)</label>
-                <input type="text" id="modal-nombre" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre(s)</label>
+                <input type="text" id="modal-nombre" class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Área</label>
-                <input type="text" id="modal-area" placeholder="Ej. AREA EXACTAS" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Área</label>
+                <input type="text" id="modal-area" placeholder="Ej. AREA EXACTAS" class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Correo Electrónico</label>
-                <input type="email" id="modal-email" placeholder="docente@bue.edu.ar" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+                <input type="email" id="modal-email" placeholder="docente@bue.edu.ar" class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
             </div>
-            <div class="flex items-center justify-end space-x-2 pt-2 border-t">
-                <button onclick="closeDocenteModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
-                <button onclick="saveDocenteFromModal()" class="px-4 py-2 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg">Guardar</button>
+            <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+                <button onclick="closeDocenteModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Cancelar</button>
+                <button onclick="saveDocenteFromModal()" class="px-4 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl">Guardar</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL PARA EDITAR INVENTARIO -->
-    <div id="inventario-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-4">
-            <div class="flex items-center justify-between border-b pb-3">
-                <h3 id="inv-modal-title" class="text-lg font-semibold text-slate-800">Editar Equipo</h3>
-                <button onclick="closeInventarioModal()" class="text-slate-400 hover:text-slate-600">
+    <div id="inventario-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 id="inv-modal-title" class="text-base font-bold text-slate-900">Editar Equipo</h3>
+                <button onclick="closeInventarioModal()" class="text-slate-400 hover:text-slate-600 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             <input type="hidden" id="inv-edit-nb-id">
             
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">ID de Activo (Código Patrimonial)</label>
-                <input type="text" id="inv-modal-activo" placeholder="Ej. ACT-2026-0045" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">ID de Activo (Código Patrimonial)</label>
+                <input type="text" id="inv-modal-activo" placeholder="Ej. ACT-2026-0045" class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Estado del Equipo</label>
-                <select id="inv-modal-estado" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Estado del Equipo</label>
+                <select id="inv-modal-estado" class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="Disponible">Disponible</option>
                     <option value="Bajo reparación">Bajo reparación</option>
                     <option value="Roto">Roto</option>
@@ -388,13 +412,13 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Registro de Mantenimiento / Notas</label>
-                <textarea id="inv-modal-mantenimiento" rows="3" placeholder="Detalles de reparaciones, fallas, componentes..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Mantenimiento / Notas</label>
+                <textarea id="inv-modal-mantenimiento" rows="3" placeholder="Detalles de reparaciones, fallas, componentes..." class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"></textarea>
             </div>
 
-            <div class="flex items-center justify-end space-x-2 pt-2 border-t">
-                <button onclick="closeInventarioModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
-                <button onclick="saveInventarioItem()" class="px-4 py-2 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg">Guardar Cambios</button>
+            <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+                <button onclick="closeInventarioModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Cancelar</button>
+                <button onclick="saveInventarioItem()" class="px-4 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl">Guardar Cambios</button>
             </div>
         </div>
     </div>
