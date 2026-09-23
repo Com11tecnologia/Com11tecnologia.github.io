@@ -18,7 +18,7 @@ let docentesData = JSON.parse(localStorage.getItem('docentes_netbooks')) || doce
 let prestamos = JSON.parse(localStorage.getItem('prestamos_netbooks')) || [];
 let inventarioEquipos = JSON.parse(localStorage.getItem('inventario_equipos')) || {};
 
-// Inicializar 40 equipos por cada carro
+// Inicialización de los 40 equipos por carro
 const todosLosCarros = ['Carro A', 'Carro B', 'Carro C', 'Carro D', 'Carro E', 'Carro F', 'Carro G'];
 todosLosCarros.forEach(carro => {
     for (let i = 1; i <= 40; i++) {
@@ -40,6 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
     populateDocentesList();
     handleInvSectorChange();
     updateUI();
+
+    // Event listener exclusivo para el cambio de selector de Carro (evita interferir con los checkboxes)
+    const selectCarro = document.getElementById('carro');
+    if (selectCarro) {
+        selectCarro.addEventListener('change', () => {
+            renderNetbooksGrid();
+        });
+    }
 });
 
 function saveToLocalStorage() {
@@ -108,21 +116,34 @@ function renderNetbooksGrid() {
     const grid = document.getElementById('netbooks-grid');
     if (!grid) return;
 
-    const carroSeleccionado = document.getElementById('carro') ? document.getElementById('carro').value : '';
+    const selectCarro = document.getElementById('carro');
+    const carroSeleccionado = selectCarro ? selectCarro.value : '';
+
+    if (!carroSeleccionado) {
+        grid.innerHTML = `
+            <div class="col-span-full py-8 text-center text-slate-400 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl">
+                <i data-lucide="arrow-up" class="w-6 h-6 mx-auto mb-2 text-slate-400 animate-bounce"></i>
+                <p class="text-xs font-semibold">Seleccione primero un <span class="text-slate-700">Sector</span> y <span class="text-slate-700">Carro Asignado</span> arriba para habilitar las casillas.</p>
+            </div>
+        `;
+        lucide.createIcons();
+        return;
+    }
+
     const ocupadas = getOcupiedNetbooksByCarro(carroSeleccionado);
     grid.innerHTML = '';
 
     for (let i = 1; i <= 40; i++) {
         const strNum = String(i);
         const isOcupied = ocupadas.has(strNum);
-        const keyInventario = carroSeleccionado ? `${carroSeleccionado}_${i}` : `Carro C_${i}`;
+        const keyInventario = `${carroSeleccionado}_${i}`;
         const equipo = inventarioEquipos[keyInventario] || { estado: 'Disponible' };
         const estado = equipo.estado;
 
         if (estado === 'Desaparecido') {
             grid.innerHTML += `
                 <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="sr-only netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-purple-300 bg-purple-100/80 text-purple-900 cursor-not-allowed select-none" title="Equipo N° ${i} Desaparecido">
                         <i data-lucide="ghost" class="w-4 h-4 mb-1 text-purple-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
@@ -133,7 +154,7 @@ function renderNetbooksGrid() {
         } else if (estado === 'Roto') {
             grid.innerHTML += `
                 <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="sr-only netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-rose-300 bg-rose-100/80 text-rose-900 cursor-not-allowed select-none" title="Equipo N° ${i} Roto">
                         <i data-lucide="alert-triangle" class="w-4 h-4 mb-1 text-rose-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
@@ -144,7 +165,7 @@ function renderNetbooksGrid() {
         } else if (estado === 'Bajo reparación') {
             grid.innerHTML += `
                 <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="sr-only netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-amber-300 bg-amber-100/80 text-amber-900 cursor-not-allowed select-none" title="Equipo N° ${i} Bajo reparación">
                         <i data-lucide="wrench" class="w-4 h-4 mb-1 text-amber-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
@@ -155,7 +176,7 @@ function renderNetbooksGrid() {
         } else if (estado === 'Arrendado') {
             grid.innerHTML += `
                 <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="sr-only netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-sky-300 bg-sky-100/80 text-sky-900 cursor-not-allowed select-none" title="Equipo N° ${i} Arrendado">
                         <i data-lucide="file-contract" class="w-4 h-4 mb-1 text-sky-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
@@ -166,7 +187,7 @@ function renderNetbooksGrid() {
         } else if (isOcupied) {
             grid.innerHTML += `
                 <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="sr-only netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-red-200 bg-red-50 text-red-600 cursor-not-allowed select-none" title="Equipo N° ${i} prestado actualmente">
                         <i data-lucide="lock" class="w-4 h-4 mb-1 text-red-500"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
@@ -177,7 +198,7 @@ function renderNetbooksGrid() {
         } else {
             grid.innerHTML += `
                 <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" class="hidden netbook-checkbox">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" class="sr-only netbook-checkbox">
                     <label for="nb_${i}" class="netbook-card flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-500 hover:shadow-sm cursor-pointer select-none">
                         <i data-lucide="laptop" class="w-4 h-4 mb-1 text-slate-500"></i>
                         <span class="text-xs font-bold text-slate-800">N° ${i}</span>
@@ -212,12 +233,6 @@ function handleSectorChange() {
     }
     renderNetbooksGrid();
 }
-
-document.addEventListener("change", (e) => {
-    if (e.target && e.target.id === 'carro') {
-        renderNetbooksGrid();
-    }
-});
 
 function handleInvSectorChange() {
     const sector = document.getElementById('inv-sector').value;
@@ -497,11 +512,12 @@ function selectAll(status) {
 function handleSubmit(e) {
     e.preventDefault();
 
-    const carroSeleccionado = document.getElementById('carro').value;
+    const selectCarro = document.getElementById('carro');
+    const carroSeleccionado = selectCarro ? selectCarro.value : '';
     const selectedNetbooks = Array.from(document.querySelectorAll('input[name="netbooks"]:checked')).map(cb => String(cb.value));
 
     if (!carroSeleccionado) {
-        alert("Por favor seleccione un carro.");
+        alert("Por favor seleccione un Sector y un Carro Asignado antes de registrar.");
         return;
     }
 
