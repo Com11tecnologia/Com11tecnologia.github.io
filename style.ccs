@@ -1,17 +1,27 @@
- /* Estilos personalizados del proyecto */
-body { 
-    font-family: 'Inter', sans-serif; 
-}
+ /* Estilos personalizados para la grilla dinámica de netbooks */
 
-/* Estado seleccionado de las casillas de netbooks (Verde) */
+/* Casilla de Netbook Seleccionada (Verde Esmeralda) */
 .netbook-checkbox:checked + label {
-    background-color: #10b981;
+    background-color: #059669;
     color: #ffffff;
-    border-color: #059669;
-    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3), 0 2px 4px -1px rgba(16, 185, 129, 0.06);
-    transform: translateY(-1px);
+    border-color: #047857;
+    box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.3), 0 4px 6px -4px rgba(5, 150, 105, 0.2);
+    transform: translateY(-2px) scale(1.02);
 }
 
+.netbook-checkbox:checked + label i {
+    color: #ffffff !important;
+}
+
+.netbook-checkbox:checked + label span {
+    color: #ffffff !important;
+}
+
+/* Transición fluida para las tarjetas */
 .netbook-card {
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.netbook-card:hover {
+    transform: translateY(-2px);
 }
