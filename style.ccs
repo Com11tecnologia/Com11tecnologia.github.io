@@ -1,23 +1,30 @@
- /* Estilos personalizados para la grilla dinámica de netbooks */
+ /* Estilos visuales para las casillas de netbook */
 
-/* Casilla de Netbook Seleccionada (Verde Esmeralda) */
+/* Ocultar input manteniendo accesibilidad */
+.netbook-checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: auto;
+}
+
+/* Estado SELECCIONADO / MARCADO (Verde Esmeralda destellante) */
 .netbook-checkbox:checked + label {
-    background-color: #059669;
-    color: #ffffff;
-    border-color: #047857;
-    box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.3), 0 4px 6px -4px rgba(5, 150, 105, 0.2);
-    transform: translateY(-2px) scale(1.02);
+    background-color: #059669 !important;
+    color: #ffffff !important;
+    border-color: #047857 !important;
+    box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.4), 0 4px 6px -4px rgba(5, 150, 105, 0.2) !important;
+    transform: translateY(-2px) scale(1.03);
 }
 
 .netbook-checkbox:checked + label i {
     color: #ffffff !important;
 }
 
-.netbook-checkbox:checked + label span {
+.netbook-checkbox:checked + label .status-text {
     color: #ffffff !important;
 }
 
-/* Transición fluida para las tarjetas */
+/* Transición suave */
 .netbook-card {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
