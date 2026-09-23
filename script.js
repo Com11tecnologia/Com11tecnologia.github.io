@@ -18,7 +18,7 @@ let docentesData = JSON.parse(localStorage.getItem('docentes_netbooks')) || doce
 let prestamos = JSON.parse(localStorage.getItem('prestamos_netbooks')) || [];
 let inventarioEquipos = JSON.parse(localStorage.getItem('inventario_equipos')) || {};
 
-// Inicialización de los 40 equipos por carro
+// Inicializar 40 equipos por cada carro
 const todosLosCarros = ['Carro A', 'Carro B', 'Carro C', 'Carro D', 'Carro E', 'Carro F', 'Carro G'];
 todosLosCarros.forEach(carro => {
     for (let i = 1; i <= 40; i++) {
@@ -48,7 +48,7 @@ function saveToLocalStorage() {
     localStorage.setItem('inventario_equipos', JSON.stringify(inventarioEquipos));
 }
 
-// FUNCIONES DE COPIA DE SEGURIDAD GENERAL (BACKUP)
+// BACKUP JSON GENERAL
 function exportBackupJSON() {
     const backupData = {
         prestamos: prestamos,
@@ -83,7 +83,7 @@ function importBackupJSON(event) {
                 updateUI();
                 alert("Backup restaurado correctamente.");
             } else {
-                alert("El archivo subido no tiene un formato válido.");
+                alert("El archivo subido no contiene un formato de backup válido.");
             }
         } catch (err) {
             alert("Error al procesar el archivo de backup.");
@@ -123,7 +123,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-purple-400 bg-purple-100 text-purple-900 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Desaparecido">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-purple-300 bg-purple-100/80 text-purple-900 cursor-not-allowed select-none" title="Equipo N° ${i} Desaparecido">
                         <i data-lucide="ghost" class="w-4 h-4 mb-1 text-purple-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-extrabold tracking-wider uppercase text-purple-900">Desaparecido</span>
@@ -134,7 +134,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-rose-400 bg-rose-100 text-rose-900 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Roto">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-rose-300 bg-rose-100/80 text-rose-900 cursor-not-allowed select-none" title="Equipo N° ${i} Roto">
                         <i data-lucide="alert-triangle" class="w-4 h-4 mb-1 text-rose-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-extrabold tracking-wider uppercase text-rose-900">Roto</span>
@@ -145,7 +145,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-amber-400 bg-amber-100 text-amber-900 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Bajo reparación">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-amber-300 bg-amber-100/80 text-amber-900 cursor-not-allowed select-none" title="Equipo N° ${i} Bajo reparación">
                         <i data-lucide="wrench" class="w-4 h-4 mb-1 text-amber-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-extrabold tracking-wider uppercase text-amber-900">Reparación</span>
@@ -156,7 +156,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-sky-400 bg-sky-100 text-sky-900 cursor-not-allowed opacity-90 select-none" title="Equipo N° ${i} Arrendado">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-sky-300 bg-sky-100/80 text-sky-900 cursor-not-allowed select-none" title="Equipo N° ${i} Arrendado">
                         <i data-lucide="file-contract" class="w-4 h-4 mb-1 text-sky-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-extrabold tracking-wider uppercase text-sky-900">Arrendado</span>
@@ -167,7 +167,7 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2 rounded-lg border border-red-300 bg-red-50 text-red-600 cursor-not-allowed opacity-80 select-none" title="Equipo N° ${i} prestado">
+                    <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-red-200 bg-red-50 text-red-600 cursor-not-allowed select-none" title="Equipo N° ${i} prestado actualmente">
                         <i data-lucide="lock" class="w-4 h-4 mb-1 text-red-500"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
                         <span class="text-[9px] font-bold tracking-wider uppercase text-red-600">Prestada</span>
@@ -178,10 +178,10 @@ function renderNetbooksGrid() {
             grid.innerHTML += `
                 <div>
                     <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" class="hidden netbook-checkbox">
-                    <label for="nb_${i}" class="netbook-card flex flex-col items-center justify-center p-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-400 cursor-pointer select-none">
-                        <i data-lucide="laptop" class="w-4 h-4 mb-1 text-slate-600"></i>
-                        <span class="text-xs font-bold">N° ${i}</span>
-                        <span class="text-[9px] font-medium text-emerald-600">Disponible</span>
+                    <label for="nb_${i}" class="netbook-card flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-500 hover:shadow-sm cursor-pointer select-none">
+                        <i data-lucide="laptop" class="w-4 h-4 mb-1 text-slate-500"></i>
+                        <span class="text-xs font-bold text-slate-800">N° ${i}</span>
+                        <span class="text-[9px] font-bold text-emerald-600">Disponible</span>
                     </label>
                 </div>
             `;
@@ -198,7 +198,8 @@ function handleSectorChange() {
 
     if (sector && carrosPorSector[sector]) {
         selectCarro.disabled = false;
-        selectCarro.classList.remove('bg-slate-50');
+        selectCarro.classList.remove('bg-slate-100/70', 'cursor-not-allowed');
+        selectCarro.classList.add('bg-slate-50/50');
         carrosPorSector[sector].forEach(carro => {
             const opt = document.createElement('option');
             opt.value = carro;
@@ -207,7 +208,7 @@ function handleSectorChange() {
         });
     } else {
         selectCarro.disabled = true;
-        selectCarro.classList.add('bg-slate-50');
+        selectCarro.classList.add('bg-slate-100/70', 'cursor-not-allowed');
     }
     renderNetbooksGrid();
 }
@@ -254,16 +255,16 @@ function renderInventarioTable() {
 
         tbody.innerHTML += `
             <tr class="hover:bg-slate-50 transition">
-                <td class="px-4 py-2.5 font-bold text-slate-800">${carroSeleccionado} - N° ${i}</td>
-                <td class="px-4 py-2.5 text-xs font-mono text-slate-600">${eq.idActivo}</td>
-                <td class="px-4 py-2.5">
-                    <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full border ${badgeStyle}">
+                <td class="px-5 py-3 font-bold text-slate-800">${carroSeleccionado} - N° ${i}</td>
+                <td class="px-5 py-3 font-mono text-[11px] text-slate-500">${eq.idActivo}</td>
+                <td class="px-5 py-3">
+                    <span class="px-2.5 py-0.5 text-[10px] font-bold rounded-full border ${badgeStyle}">
                         ${eq.estado}
                     </span>
                 </td>
-                <td class="px-4 py-2.5 text-xs text-slate-500 max-w-xs truncate">${eq.mantenimiento}</td>
-                <td class="px-4 py-2.5 text-right">
-                    <button onclick="openInventarioModal('${carroSeleccionado}', ${i})" class="p-1 text-slate-500 hover:text-blue-600" title="Editar Activo / Mantenimiento">
+                <td class="px-5 py-3 text-slate-500 max-w-xs truncate">${eq.mantenimiento}</td>
+                <td class="px-5 py-3 text-right">
+                    <button onclick="openInventarioModal('${carroSeleccionado}', ${i})" class="p-1 text-slate-400 hover:text-blue-600 transition" title="Editar Activo / Mantenimiento">
                         <i data-lucide="edit-3" class="w-4 h-4"></i>
                     </button>
                 </td>
@@ -331,14 +332,14 @@ function renderDocentesTable() {
     docentesData.forEach((d, idx) => {
         tbody.innerHTML += `
             <tr class="hover:bg-slate-50 transition">
-                <td class="px-4 py-2.5 font-semibold text-slate-800">${d.apellido}, ${d.nombre}</td>
-                <td class="px-4 py-2.5 text-xs text-slate-600">${d.area || 'N/A'}</td>
-                <td class="px-4 py-2.5 text-xs text-slate-500">${d.email || 'N/A'}</td>
-                <td class="px-4 py-2.5 text-right space-x-1">
-                    <button onclick="editDocente(${idx})" class="p-1 text-slate-500 hover:text-blue-600" title="Modificar">
+                <td class="px-5 py-3 font-semibold text-slate-800">${d.apellido}, ${d.nombre}</td>
+                <td class="px-5 py-3 text-slate-600">${d.area || 'N/A'}</td>
+                <td class="px-5 py-3 text-slate-500">${d.email || 'N/A'}</td>
+                <td class="px-5 py-3 text-right space-x-1">
+                    <button onclick="editDocente(${idx})" class="p-1 text-slate-400 hover:text-blue-600 transition" title="Modificar">
                         <i data-lucide="pencil" class="w-4 h-4"></i>
                     </button>
-                    <button onclick="deleteDocente(${idx})" class="p-1 text-slate-500 hover:text-red-600" title="Eliminar">
+                    <button onclick="deleteDocente(${idx})" class="p-1 text-slate-400 hover:text-rose-600 transition" title="Eliminar">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 </td>
@@ -530,6 +531,7 @@ function handleSubmit(e) {
     const docenteInput = document.getElementById('docente_input').value;
     const areaInput = document.getElementById('area').value || 'N/A';
     const emailInput = document.getElementById('email').value || 'N/A';
+    const cursoInput = document.getElementById('curso').value || 'N/A';
 
     saveOrUpdateDocente(docenteInput, areaInput, emailInput);
 
@@ -545,7 +547,7 @@ function handleSubmit(e) {
         estudiante: (document.getElementById('estudiante_apellido').value || document.getElementById('estudiante_nombre').value)
             ? `${document.getElementById('estudiante_apellido').value} ${document.getElementById('estudiante_nombre').value}`.trim() 
             : 'N/A',
-        numeroSerie: document.getElementById('numero_serie').value || 'N/A',
+        curso: cursoInput,
         netbooks: selectedNetbooks,
         estado: 'Asignada'
     };
@@ -570,6 +572,7 @@ function sendNotificationEmail(record) {
         `- Turno: ${record.turno}\n` +
         `- Ubicación: ${record.sector} (${record.carro})\n` +
         `- Netbooks N°: ${record.netbooks.join(', ')}\n` +
+        (record.curso !== 'N/A' ? `- Curso: ${record.curso}\n` : '') +
         (record.estudiante !== 'N/A' ? `- Estudiante: ${record.estudiante}\n` : '') +
         `\nMuchas gracias.`
     );
@@ -625,8 +628,8 @@ function updateUI() {
     if (prestamos.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="px-4 py-8 text-center text-slate-400">
-                    No hay préstamos registrados.
+                <td colspan="8" class="px-5 py-8 text-center text-slate-400 font-medium">
+                    No hay préstamos registrados en el historial.
                 </td>
             </tr>
         `;
@@ -639,32 +642,33 @@ function updateUI() {
             : 'bg-emerald-100 text-emerald-800 border-emerald-200';
 
         tbody.innerHTML += `
-            <tr class="hover:bg-slate-50 transition">
-                <td class="px-4 py-3 font-medium text-slate-800 whitespace-nowrap">${p.fecha}<span class="text-xs font-normal text-slate-400 block">${p.turno}</span></td>
-                <td class="px-4 py-3 font-semibold text-slate-800">${p.docente}</td>
-                <td class="px-4 py-3">
-                    <span class="block text-xs text-slate-600">${p.area}</span>
-                    <span class="block text-xs text-slate-400">${p.email}</span>
+            <tr class="hover:bg-slate-50/80 transition">
+                <td class="px-5 py-3 font-semibold text-slate-800 whitespace-nowrap">${p.fecha}<span class="text-[11px] font-normal text-slate-400 block">${p.turno}</span></td>
+                <td class="px-5 py-3 font-bold text-slate-800">${p.docente}</td>
+                <td class="px-5 py-3">
+                    <span class="block text-xs font-semibold text-slate-700">${p.area}</span>
+                    <span class="block text-[11px] text-slate-400">${p.email}</span>
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap">
-                    <span class="text-xs font-medium bg-slate-100 px-2 py-1 rounded text-slate-700">${p.sector}</span>
-                    <span class="text-xs block text-slate-500 mt-1">${p.carro}</span>
+                <td class="px-5 py-3 whitespace-nowrap">
+                    <span class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-lg text-slate-700 border border-slate-200/60">${p.sector}</span>
+                    <span class="text-[11px] block font-medium text-slate-500 mt-1">${p.carro}</span>
                 </td>
-                <td class="px-4 py-3">
+                <td class="px-5 py-3 font-semibold text-slate-700 whitespace-nowrap">${p.curso || 'N/A'}</td>
+                <td class="px-5 py-3">
                     <div class="flex flex-wrap gap-1 max-w-xs">
-                        ${p.netbooks.map(nb => `<span class="px-1.5 py-0.5 bg-blue-50 text-blue-700 font-semibold text-xs rounded border border-blue-200">N°${nb}</span>`).join('')}
+                        ${p.netbooks.map(nb => `<span class="px-2 py-0.5 bg-blue-50 text-blue-700 font-bold text-[11px] rounded-md border border-blue-200/80">N°${nb}</span>`).join('')}
                     </div>
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap">
-                    <span class="px-2.5 py-1 text-xs font-semibold rounded-full border ${badgeColor}">
+                <td class="px-5 py-3 whitespace-nowrap">
+                    <span class="px-2.5 py-1 text-[10px] font-extrabold rounded-full border ${badgeColor}">
                         ${p.estado}
                     </span>
                 </td>
-                <td class="px-4 py-3 text-right space-x-2 whitespace-nowrap">
-                    <button onclick="toggleDevolucion(${p.id})" class="p-1 text-slate-500 hover:text-emerald-600 rounded transition" title="Marcar Devolución / Asignación">
-                        <i data-lucide="${p.estado === 'Asignada' ? 'check-circle' : 'rotate-ccw'}" class="w-5 h-5"></i>
+                <td class="px-5 py-3 text-right space-x-1 whitespace-nowrap">
+                    <button onclick="toggleDevolucion(${p.id})" class="p-1.5 text-slate-400 hover:text-emerald-600 rounded-lg transition" title="Marcar Devolución / Asignación">
+                        <i data-lucide="${p.estado === 'Asignada' ? 'check-circle-2' : 'rotate-ccw'}" class="w-5 h-5"></i>
                     </button>
-                    <button onclick="deleteRecord(${p.id})" class="p-1 text-slate-500 hover:text-red-600 rounded transition" title="Eliminar">
+                    <button onclick="deleteRecord(${p.id})" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition" title="Eliminar">
                         <i data-lucide="trash-2" class="w-5 h-5"></i>
                     </button>
                 </td>
@@ -681,7 +685,7 @@ function exportToCSV() {
         return;
     }
 
-    const headers = ["Fecha", "Turno", "Docente", "Area", "Email", "Sector", "Carro", "Equipos Netbook", "Estudiante", "Numero de Serie", "Estado"];
+    const headers = ["Fecha", "Turno", "Docente", "Area", "Email", "Sector", "Carro", "Curso", "Equipos Netbook", "Estudiante", "Estado"];
     
     const rows = prestamos.map(p => [
         `"${p.fecha}"`,
@@ -691,9 +695,9 @@ function exportToCSV() {
         `"${p.email}"`,
         `"${p.sector}"`,
         `"${p.carro}"`,
+        `"${p.curso || 'N/A'}"`,
         `"${p.netbooks.map(nb => 'N°' + nb).join('; ')}"`,
         `"${p.estudiante}"`,
-        `"${p.numeroSerie}"`,
         `"${p.estado}"`
     ]);
 
