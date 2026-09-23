@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Control de Netbooks - Espacio Digital</title>
-    <!-- Tailwind CSS desde CDN -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Iconos Lucide -->
+    <!-- Iconos Lucide CDN -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
-    <!-- Fuente Google Inter -->
+    <!-- Fuente Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Estilos personalizados -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
@@ -29,6 +28,7 @@
                     </div>
                 </div>
 
+                <!-- Métricas diarias -->
                 <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-md p-2 sm:p-3 rounded-xl border border-white/20 shadow-inner">
                     <div class="text-center px-3 py-1 bg-blue-950/40 rounded-lg">
                         <span class="block text-xs font-medium text-blue-200 uppercase tracking-wider">Hoy Asignadas</span>
@@ -45,6 +45,28 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- BOTONES DE BACKUP / COPIA DE SEGURIDAD GENERAL -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="shield-check" class="w-6 h-6 text-blue-600"></i>
+                <div>
+                    <h4 class="text-sm font-semibold text-blue-900">Copia de Seguridad de Datos</h4>
+                    <p class="text-xs text-blue-700">Guarda o restaura en un archivo todos tus datos de docentes, inventario y préstamos.</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="exportBackupJSON()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center space-x-1">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Descargar Backup</span>
+                </button>
+                <label class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition flex items-center space-x-1">
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    <span>Restaurar Backup</span>
+                    <input type="file" id="backup-file-input" accept=".json" class="hidden" onchange="importBackupJSON(event)">
+                </label>
+            </div>
+        </div>
 
         <!-- FORMULARIO DE REGISTRO DE PRÉSTAMO -->
         <form id="loanForm" class="space-y-8" onsubmit="handleSubmit(event)">
@@ -171,7 +193,7 @@
                 <div class="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-10 gap-2.5" id="netbooks-grid"></div>
             </div>
 
-            <!-- ENVIAR CORREO Y BOTONES -->
+            <!-- ENVIAR CORREO Y ACCIONES -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
                     <input type="checkbox" id="send_email_option" name="send_email_option"
@@ -193,7 +215,7 @@
             </div>
         </form>
 
-        <!-- SECCIÓN DE INVENTARIO Y MANTENIMIENTO DE NETBOOKS -->
+        <!-- INVENTARIO Y MANTENIMIENTO DE EQUIPOS -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -235,7 +257,7 @@
             </div>
         </div>
 
-        <!-- SECCIÓN DE GESTIÓN DE DOCENTES Y USUARIOS -->
+        <!-- GESTIÓN DE DOCENTES Y USUARIOS -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -338,7 +360,7 @@
         </div>
     </div>
 
-    <!-- MODAL PARA EDITAR INVENTARIO Y MANTENIMIENTO -->
+    <!-- MODAL PARA EDITAR INVENTARIO -->
     <div id="inventario-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex items-center justify-between border-b pb-3">
@@ -361,6 +383,7 @@
                     <option value="Bajo reparación">Bajo reparación</option>
                     <option value="Roto">Roto</option>
                     <option value="Arrendado">Arrendado</option>
+                    <option value="Desaparecido">Desaparecido</option>
                 </select>
             </div>
 
