@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     handleInvSectorChange();
     updateUI();
 
-    // Event listener exclusivo para el cambio de selector de Carro (evita interferir con los checkboxes)
+    // Listener exclusivo para selector de carro
     const selectCarro = document.getElementById('carro');
     if (selectCarro) {
         selectCarro.addEventListener('change', () => {
@@ -142,8 +142,8 @@ function renderNetbooksGrid() {
 
         if (estado === 'Desaparecido') {
             grid.innerHTML += `
-                <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="sr-only netbook-checkbox">
+                <div class="relative">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-purple-300 bg-purple-100/80 text-purple-900 cursor-not-allowed select-none" title="Equipo N° ${i} Desaparecido">
                         <i data-lucide="ghost" class="w-4 h-4 mb-1 text-purple-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
@@ -153,8 +153,8 @@ function renderNetbooksGrid() {
             `;
         } else if (estado === 'Roto') {
             grid.innerHTML += `
-                <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="sr-only netbook-checkbox">
+                <div class="relative">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-rose-300 bg-rose-100/80 text-rose-900 cursor-not-allowed select-none" title="Equipo N° ${i} Roto">
                         <i data-lucide="alert-triangle" class="w-4 h-4 mb-1 text-rose-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
@@ -164,8 +164,8 @@ function renderNetbooksGrid() {
             `;
         } else if (estado === 'Bajo reparación') {
             grid.innerHTML += `
-                <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="sr-only netbook-checkbox">
+                <div class="relative">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-amber-300 bg-amber-100/80 text-amber-900 cursor-not-allowed select-none" title="Equipo N° ${i} Bajo reparación">
                         <i data-lucide="wrench" class="w-4 h-4 mb-1 text-amber-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
@@ -175,8 +175,8 @@ function renderNetbooksGrid() {
             `;
         } else if (estado === 'Arrendado') {
             grid.innerHTML += `
-                <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="sr-only netbook-checkbox">
+                <div class="relative">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-sky-300 bg-sky-100/80 text-sky-900 cursor-not-allowed select-none" title="Equipo N° ${i} Arrendado">
                         <i data-lucide="file-contract" class="w-4 h-4 mb-1 text-sky-700"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
@@ -186,8 +186,8 @@ function renderNetbooksGrid() {
             `;
         } else if (isOcupied) {
             grid.innerHTML += `
-                <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="sr-only netbook-checkbox">
+                <div class="relative">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" disabled class="netbook-checkbox">
                     <label for="nb_${i}" class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-red-200 bg-red-50 text-red-600 cursor-not-allowed select-none" title="Equipo N° ${i} prestado actualmente">
                         <i data-lucide="lock" class="w-4 h-4 mb-1 text-red-500"></i>
                         <span class="text-xs font-bold">N° ${i}</span>
@@ -197,12 +197,12 @@ function renderNetbooksGrid() {
             `;
         } else {
             grid.innerHTML += `
-                <div>
-                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" class="sr-only netbook-checkbox">
+                <div class="relative">
+                    <input type="checkbox" id="nb_${i}" name="netbooks" value="${i}" class="netbook-checkbox">
                     <label for="nb_${i}" class="netbook-card flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-500 hover:shadow-sm cursor-pointer select-none">
                         <i data-lucide="laptop" class="w-4 h-4 mb-1 text-slate-500"></i>
-                        <span class="text-xs font-bold text-slate-800">N° ${i}</span>
-                        <span class="text-[9px] font-bold text-emerald-600">Disponible</span>
+                        <span class="text-xs font-bold">N° ${i}</span>
+                        <span class="text-[9px] font-bold text-emerald-600 status-text">Disponible</span>
                     </label>
                 </div>
             `;
