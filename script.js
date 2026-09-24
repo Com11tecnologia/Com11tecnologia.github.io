@@ -5,6 +5,14 @@ const carrosPorSector = {
     'Secretaría': ['Carro A', 'Carro B', 'Carro F']
 };
 
+// Determina la cantidad máxima de netbooks según el carro
+function getCapacidadCarro(carro) {
+    if (carro === 'Carro E') {
+        return 40; // Carro E tiene 40 netbooks
+    }
+    return 30; // Todos los demás carros tienen 30 netbooks
+}
+
 const docentesDefault = [
     { nombre: "Carlos Alberto", apellido: "Barbieri", area: "AREA CONTABLES", email: "carlos.barbieri@bue.edu.ar" },
     { nombre: "Eduardo", apellido: "Yugdar", area: "AREA CONTABLES", email: "eduardo.yugdar@bue.edu.ar" },
@@ -18,10 +26,11 @@ let docentesData = JSON.parse(localStorage.getItem('docentes_netbooks')) || doce
 let prestamos = JSON.parse(localStorage.getItem('prestamos_netbooks')) || [];
 let inventarioEquipos = JSON.parse(localStorage.getItem('inventario_equipos')) || {};
 
-// Inicialización de los 40 equipos por carro
+// Inicialización del inventario ajustado a la capacidad de cada carro
 const todosLosCarros = ['Carro A', 'Carro B', 'Carro C', 'Carro D', 'Carro E', 'Carro F', 'Carro G'];
 todosLosCarros.forEach(carro => {
-    for (let i = 1; i <= 40; i++) {
+    const maxNets = getCapacidadCarro(carro);
+    for (let i = 1; i <= maxNets; i++) {
         const key = `${carro}_${i}`;
         if (!inventarioEquipos[key]) {
             inventarioEquipos[key] = {
@@ -130,10 +139,11 @@ function renderNetbooksGrid() {
         return;
     }
 
+    const maxNets = getCapacidadCarro(carroSeleccionado);
     const ocupadas = getOcupiedNetbooksByCarro(carroSeleccionado);
     grid.innerHTML = '';
 
-    for (let i = 1; i <= 40; i++) {
+    for (let i = 1; i <= maxNets; i++) {
         const strNum = String(i);
         const isOcupied = ocupadas.has(strNum);
         const keyInventario = `${carroSeleccionado}_${i}`;
@@ -224,7 +234,7 @@ function handleSectorChange() {
         carrosPorSector[sector].forEach(carro => {
             const opt = document.createElement('option');
             opt.value = carro;
-            opt.textContent = carro;
+            opt.textContent = `${carro} (${getCapacidadCarro(carro)} nets)`;
             selectCarro.appendChild(opt);
         });
     } else {
@@ -244,7 +254,7 @@ function handleInvSectorChange() {
         carrosPorSector[sector].forEach(carro => {
             const opt = document.createElement('option');
             opt.value = carro;
-            opt.textContent = carro;
+            opt.textContent = `${carro} (${getCapacidadCarro(carro)} nets)`;
             selectCarro.appendChild(opt);
         });
     }
@@ -257,8 +267,9 @@ function renderInventarioTable() {
     if (!tbody || !carroSeleccionado) return;
 
     tbody.innerHTML = '';
+    const maxNets = getCapacidadCarro(carroSeleccionado);
 
-    for (let i = 1; i <= 40; i++) {
+    for (let i = 1; i <= maxNets; i++) {
         const key = `${carroSeleccionado}_${i}`;
         const eq = inventarioEquipos[key] || { idActivo: 'N/A', estado: 'Disponible', mantenimiento: '' };
 
@@ -328,11 +339,21 @@ function saveInventarioItem() {
     closeInventarioModal();
 }
 
+// ORDENAMIENTO ALFABÉTICO DE DOCENTES (Por Apellido, Nombre)
+function getDocentesOrdenados() {
+    return [...docentesData].sort((a, b) => {
+        const fullA = `${a.apellido || ''} ${a.nombre || ''}`.toLowerCase().trim();
+        const fullB = `${b.apellido || ''} ${b.nombre || ''}`.toLowerCase().trim();
+        return fullA.localeCompare(fullB, 'es', { sensitivity: 'base' });
+    });
+}
+
 function populateDocentesList() {
     const datalist = document.getElementById('docentes_list');
     if (!datalist) return;
     datalist.innerHTML = '';
-    docentesData.forEach(d => {
+    const ordenados = getDocentesOrdenados();
+    ordenados.forEach(d => {
         const option = document.createElement('option');
         option.value = `${d.apellido}, ${d.nombre}`;
         datalist.appendChild(option);
@@ -344,17 +365,22 @@ function renderDocentesTable() {
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    docentesData.forEach((d, idx) => {
+    const ordenados = getDocentesOrdenados();
+
+    ordenados.forEach((d) => {
+        // Encontrar índice original para edición/eliminación
+        const originalIndex = docentesData.findIndex(orig => orig.apellido === d.apellido && orig.nombre === d.nombre);
+
         tbody.innerHTML += `
             <tr class="hover:bg-slate-50 transition">
                 <td class="px-5 py-3 font-semibold text-slate-800">${d.apellido}, ${d.nombre}</td>
                 <td class="px-5 py-3 text-slate-600">${d.area || 'N/A'}</td>
                 <td class="px-5 py-3 text-slate-500">${d.email || 'N/A'}</td>
                 <td class="px-5 py-3 text-right space-x-1">
-                    <button onclick="editDocente(${idx})" class="p-1 text-slate-400 hover:text-blue-600 transition" title="Modificar">
+                    <button onclick="editDocente(${originalIndex})" class="p-1 text-slate-400 hover:text-blue-600 transition" title="Modificar">
                         <i data-lucide="pencil" class="w-4 h-4"></i>
                     </button>
-                    <button onclick="deleteDocente(${idx})" class="p-1 text-slate-400 hover:text-rose-600 transition" title="Eliminar">
+                    <button onclick="deleteDocente(${originalIndex})" class="p-1 text-slate-400 hover:text-rose-600 transition" title="Eliminar">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 </td>
@@ -419,6 +445,7 @@ function editDocente(idx) {
 }
 
 function deleteDocente(idx) {
+    if (idx < 0) return;
     if (confirm(`¿Deseas eliminar a ${docentesData[idx].apellido}, ${docentesData[idx].nombre}?`)) {
         docentesData.splice(idx, 1);
         saveToLocalStorage();
@@ -522,7 +549,7 @@ function handleSubmit(e) {
     }
 
     if (selectedNetbooks.length === 0) {
-        alert("Por favor seleccione al menos una netbook disponible (1-40).");
+        alert(`Por favor seleccione al menos una netbook disponible (1-${getCapacidadCarro(carroSeleccionado)}).`);
         return;
     }
 
